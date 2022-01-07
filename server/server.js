@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -13,6 +14,7 @@ app.use(cors())
 
 //Local imports
 const AuthRoute = require('./routes/auth')
+const topSecret = require('./routes/authed')
 
 // MongoDBUri form env file goes here.
 const mongoDBUri = process.env.MONGODB_URI
@@ -42,29 +44,33 @@ app.use(session({
 }))
 
 const isAuth = (req, res, next) => {
-    try{
-        if ( !req.session.authorization ) res.get('/')
-        else next(); 
-    }catch (error) {
-        return res.send({status:true, message:'your session is not valid', data:error}) 
+    try {
+        if (!req.session.authorization) res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+        else next();
+    } catch (error) {
+        return res.send({ status: true, message: 'your session is not valid', data: error })
     }
 }
+
+app.get('/', isAuth, (req, res) => {
+
+    res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+})
 
 
 app.use(express.static(path.join(__dirname, "..", "client/build")));
 
-app.use('/api/auth/', AuthRoute )
+app.use('/api/auth/', AuthRoute)
+app.use('/api/auth/', topSecret)
 
 app.use((req, res, next) => {
-  res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
 });
 
-app.get('/',isAuth , (req, res) => {
-    
-})
+
 
 const PORT = process.env.PORT || 7000
-app.listen(PORT , () => {
+app.listen(PORT, () => {
     console.log("listening on port " + PORT)
 })
 
