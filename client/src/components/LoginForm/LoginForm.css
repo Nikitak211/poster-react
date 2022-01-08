@@ -17,7 +17,7 @@ form button{
     border-radius:5px;
     background-color: white;
 }
-form{
+.LoginForm{
     color: white;
     width: 15em;
     max-height: max-content;

@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import './LoginForm.css';
 
-const LoginForm = ({setToken}) => {
+const LoginForm = () => {
     const {
         register,
         handleSubmit,
@@ -40,7 +40,7 @@ const LoginForm = ({setToken}) => {
             })
     }
     return (
-        <form action="" onSubmit={handleSubmit((data) => {
+        <form className="LoginForm" action="" onSubmit={handleSubmit((data) => {
             LogUser(data.email, data.Password)
         })}>
             <div>

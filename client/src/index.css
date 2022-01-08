@@ -1,6 +1,14 @@
 *{
   font-family: "Helvetica Neue",Helvetica,Arial;
 }
+*,
+*::after,
+*::before {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 body{ 
   width:100%;
   height:100%;
@@ -9,4 +17,51 @@ body{
   background-repeat: no-repeat;
   background-size: cover;
 }
+input,
+button,
+textarea,
+input::placeholder{
+    font-family: inherit;
+    color: black;
+}
+:root {
+  /* colors */
+  --hue: 220;
+  --text: var(--hue) 4.8% 28.9%;
+  --accent1: var(--hue) 43.6% 57.5%;
+  --accent2: var(--hue) 71.4% 95.9%;
+  --bkg: var(--hue) 100% 99.6%;
 
+  /* box shadows */
+  --boxs-sm: 
+  4px 6px 8px hsl(var(--accent1) / 14%),
+  -3px 3px 18px 2px hsl(var(--accent1) / 12%),
+  2px 5px 10px -3px hsl(var(--accent1) / 20%);
+
+  --boxs-lg: 
+  0px 8px 10px hsl(var(--accent1) / 14%),
+  0px 3px 14px 2px hsl(var(--accent1) / 12%),
+  0px 5px 5px -3px hsl(var(--accent1) / 20%);
+
+  /* sizing */
+  --xlg: 2.369rem ;
+  --xl: 1.777rem ;
+  --md: 1.333rem ;
+  --sm: 1rem ;
+  --xsm: 0.75rem;
+
+  /* misc */
+  --radius--sm: 5px;
+  --radius-lg: 15px;
+  --transition: all 160ms cubic-bezier(0.99, 0.03, 0.68, 0.93);
+}
+
+@media only screen and (min-width: 375px) {
+  :root {
+    --xlg: 3.157rem;
+    --lg: 2.369rem;
+    --md: 1.777rem;
+    --sm: 1.333rem;
+    --xsm: 1rem;
+  }
+}

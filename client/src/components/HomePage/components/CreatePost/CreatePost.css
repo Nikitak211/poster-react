@@ -1,0 +1,61 @@
+
+.container{
+    display:grid;
+    grid-template-rows:auto auto 1fr;
+    gap: var(--xlg);
+    max-width: 1400px;
+   
+    margin: 0 auto ;
+}
+.post__body{
+    width: 100%;
+    resize: none;
+    outline: none;
+    padding-bottom: 10em;
+    border-radius:  0 0 15px 15px;
+}
+.create_post_arcticle{
+    background-color:transparent;
+    margin: 0 auto ;
+    max-width:400px;
+    min-width: 180px;
+}
+.btn_post{
+    margin:0 auto;
+    height: var(--sm);
+    background: rgba(175, 175, 175, 0.51);
+    width: var(--xlg);
+    border-radius:var(--radius--sm);
+    
+}
+.post__tag{
+    padding: 3px 6px;
+    border-radius: var(--radius--sm);
+    background-color: transparent;
+    color: hsl(var(--bkg));
+    font-size: 10px;
+}
+.post__body{
+    background-color: transparent;
+    border:0.5px dashed hsl(var(--accent2) /50%);
+    line-height: 1.4;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    max-height: 7.3rem;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+.formFillArea{
+    width: auto ;
+    background-color: rgba(135, 135, 135, 0.36);
+    border-radius: 0 0 15px 15px;
+    display:flex;
+    gap:5px;
+    z-index:1;
+}
+input.post__tag {
+    width:10em;
+    border:0.5px dashed hsl(var(--accent2) /50%);
+    outline: none;
+}

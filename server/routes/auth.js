@@ -74,8 +74,8 @@ router.post('/login', async (req, res) => {
 
                         if (result) {
 
-                            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-                            req.session.authorization = token
+                            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+                            req.session.authorization = token    
                             return res.send({
                                 success: true,
                                 isAuth: 'Login successfully',
@@ -170,11 +170,15 @@ router.get('/logged', async (req, res) => {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
             if (err) {
+                res.send({
+                    outdated: true,
+                })
                 res.locals.user = null;
             } else {
                 await User.findById(decodeToken._id).then(user => {
                     res.send({
                         success: true,
+                        exp: decodeToken.exp,
                         author: user.author,
                         avatar: user.avatar
                     })
@@ -185,6 +189,10 @@ router.get('/logged', async (req, res) => {
                     });
                 });
             }
+        })
+    } else {
+        res.send({
+            outdated: true,
         })
     }
 })

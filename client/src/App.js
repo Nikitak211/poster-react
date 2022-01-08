@@ -2,21 +2,25 @@ import { useState, useEffect } from 'react'
 import Header from "./components/header/Header";
 import axios from 'axios';
 import LoginForm from "./components/LoginForm/LoginForm";
-import Dashboard from './components/Dashboard/Dashboard';
+import HomePage from './components/HomePage/HomePage';
 import RegisterForm from "./components/RegisterForm/RegisterForm";
 
 function App() {
 
   const [token, setToken] = useState();
+  const [status, setStatus] = useState();
+
   const [visibleLogin, setVisibleLogin] = useState(true)
   const [visibleRegister, setVisibleRegister] = useState(true)
 
   const fetch = async () => {
     await axios.post('/api/auth/authed', {
-      body: "hello"
+      body: true
     })
       .then(response => {
-        const token = response.data.success
+        const token = response.data.success;
+        const status = response.data.status;
+        setStatus(status)
         setToken(token);
       })
   }
@@ -33,7 +37,7 @@ function App() {
       )
     } else {
       return (
-        <LoginForm />
+        <LoginForm/>
       )
     }
   }
@@ -51,7 +55,7 @@ function App() {
     }
   }
 
-  if (!token) {
+  if (status) {
     return (
       <div>
         <Header setVisibleLogin={setVisibleLogin} visibleLogin={visibleLogin} setVisibleRegister={setVisibleRegister} visibleRegister={visibleRegister} />
@@ -61,10 +65,17 @@ function App() {
       </div>
     )
   }
+  if (token) {
+    return (
+      <div>
+        <HomePage />
+      </div>
+    )
+  }
 
   return (
     <div>
-      <Dashboard />
+      
     </div>
   );
 

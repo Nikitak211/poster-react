@@ -43,7 +43,7 @@ const RegisterForm = () => {
     }
 
     return (
-        <form action="" onSubmit={handleSubmit((data) => {
+        <form className="FormRegister" action="" onSubmit={handleSubmit((data) => {
             createUser(data.username, data.Password, data.email)
         })}>
             <div>
