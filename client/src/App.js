@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import Header from "./components/header/Header";
 import axios from 'axios';
+
+import Header from "./components/header/Header";
 import LoginForm from "./components/LoginForm/LoginForm";
 import HomePage from './components/HomePage/HomePage';
 import RegisterForm from "./components/RegisterForm/RegisterForm";

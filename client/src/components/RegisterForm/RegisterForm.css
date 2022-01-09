@@ -27,6 +27,7 @@ form button{
     background: rgba(231, 231, 231, 0.129);
     border-radius:10px;
     box-shadow: 0px 0px 5px rgba(47, 47, 47, 0.571);
+    
 }
 form div{
     display: grid;

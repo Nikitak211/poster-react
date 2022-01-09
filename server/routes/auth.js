@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 //Local imports
 const User = require('../models/User')
-// const postSchema = require('../models/postSchema')
+const postSchema = require('../models/postSchema')
 
 router.use(express.json())
 
@@ -126,6 +126,7 @@ router.post('/post', async (req, res) => {
             title,
             content
         } = req.body
+        
 
         const token = req.session.authorization;
         if (token) {
@@ -133,7 +134,7 @@ router.post('/post', async (req, res) => {
                 if (err) {
                     res.locals.user = null;
                 } else {
-                    await User.findById(decodeToken._id).then(user => {
+                    await User.findById(decodeToken._id).then((user,post) => {
                         post = new postSchema({
                             title,
                             content,

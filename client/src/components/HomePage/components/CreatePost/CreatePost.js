@@ -1,6 +1,6 @@
-
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+
 import './CreatePost.css'
 
 const CreatePost = () => {
@@ -15,10 +15,10 @@ const CreatePost = () => {
             title: tag,
             content: content
         })
-        const Data = await response.json()
+        const Data = await response.data
 
         if (Data.success) {
-            window.location = "/";
+            window.location.reload()
 
         }
     };

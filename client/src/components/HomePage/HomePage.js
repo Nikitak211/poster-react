@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
@@ -41,7 +42,7 @@ const HomePage = () => {
         <div>
         <Header profile={profile} profileName={profileName} />
         <CreatePost/>
-        {/* <PostedPost profile={profile} profileName={profileName} /> */}
+        <PostedPost/>
         </div>
      );
 }
