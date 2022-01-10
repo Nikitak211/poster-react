@@ -30,12 +30,12 @@ const CreatePost = () => {
             <div className="container">
                     <div className="formFillArea">
                     <button className="btn_post">post</button>
-                    <input type="text" className="post__tag"
+                    <input type="text" placeholder="Title" className="post__tag"
                         {...register("tag", {
                             required: "tag is required",
                         }
                         )} ></input>
-                    <textarea placeholder="write your post here..." className="post__body"
+                    <textarea placeholder="write your post here..." className="post___body"
                         {...register("content", {
                             required: "content is required",
                         }

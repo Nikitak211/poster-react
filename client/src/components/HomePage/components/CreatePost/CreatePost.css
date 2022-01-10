@@ -1,13 +1,14 @@
 
 .container{
+    position: relative;
     display:grid;
     grid-template-rows:auto auto 1fr;
-    gap: var(--xlg);
+    gap: var(--sm);
     max-width: 1400px;
-   
-    margin: 0 auto ;
+    z-index:0;
+    margin: -3% auto ;
 }
-.post__body{
+.post___body{
     width: 100%;
     resize: none;
     outline: none;
@@ -22,8 +23,11 @@
 }
 .btn_post{
     margin:0 auto;
+    display:flex;
+    align-items: center;
     height: var(--sm);
-    background: rgba(175, 175, 175, 0.51);
+    background: #95A3B3;
+    color:#FFFFFF;
     width: var(--xlg);
     border-radius:var(--radius--sm);
     
@@ -35,8 +39,8 @@
     color: hsl(var(--bkg));
     font-size: 10px;
 }
-.post__body{
-    background-color: transparent;
+.post___body{
+    background-color: #FFFFFF;
     border:0.5px dashed hsl(var(--accent2) /50%);
     line-height: 1.4;
     overflow: hidden;
@@ -45,10 +49,14 @@
     max-height: 7.3rem;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
+    color: #222222;
+}
+.post___body::placeholder{
+    color:#4B4E6D;
 }
 .formFillArea{
     width: auto ;
-    background-color: rgba(135, 135, 135, 0.36);
+    background-color: #4B4E6D;
     border-radius: 0 0 15px 15px;
     display:flex;
     gap:5px;
@@ -58,4 +66,26 @@ input.post__tag {
     width:10em;
     border:0.5px dashed hsl(var(--accent2) /50%);
     outline: none;
+}
+@media only screen and (max-width: 700px) {
+    .container{
+        position: relative;
+        margin-top:-3.9%;
+        z-index:0;
+    }
+}
+@media only screen and (max-width: 300px) {
+    .container{
+        margin-top:-4.6%;
+    }
+}
+@media only screen and (max-width: 250px) {
+    .container{
+        margin-top:-5.1%;
+    }
+}
+@media only screen and (max-width: 200px) {
+    .container{
+        margin-top:-6.6%;
+    }
 }

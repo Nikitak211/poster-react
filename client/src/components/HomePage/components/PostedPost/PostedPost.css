@@ -1,15 +1,110 @@
-
-.profile-container{
-    width: 2em;
-    height: 2em;
-    display: inline-flex;
-}
-.profile-picture{
-    border: 1px solid black;
-    border-radius:50%;
-}
-.profile-name{
-    display: flex;
-    justify-content: center;
+:root {
+    /* colors */
+    --hue: 220;
+    --text: var(--hue) 4.8% 28.9%;
+    --accent1: var(--hue) 43.6% 57.5%;
+    --accent2: var(--hue) 71.4% 95.9%;
+    --bkg: var(--hue) 100% 99.6%;
+  
+    /* box shadows */
+    --boxs-sm: 
+    4px 6px 8px hsl(var(--accent1) / 14%),
+    -3px 3px 18px 2px hsl(var(--accent1) / 12%),
+    2px 5px 10px -3px hsl(var(--accent1) / 20%);
+  
+    --boxs-lg: 
+    0px 8px 10px hsl(var(--accent1) / 14%),
+    0px 3px 14px 2px hsl(var(--accent1) / 12%),
+    0px 5px 5px -3px hsl(var(--accent1) / 20%);
+  
+    /* sizing */
+    --xlg: 2.369rem ;
+    --xl: 1.777rem ;
+    --md: 1.333rem ;
+    --sm: 1rem ;
+    --xsm: 0.75rem;
+  
+    /* misc */
+    --radius--sm: 5px;
+    --radius-lg: 15px;
+    --transition: all 160ms cubic-bezier(0.99, 0.03, 0.68, 0.93);
+  }
+  
+  @media only screen and (min-width: 375px) {
+    :root {
+      --xlg: 3.157rem;
+      --lg: 2.369rem;
+      --md: 1.777rem;
+      --sm: 1.333rem;
+      --xsm: 1rem;
+    }
+  }
+.post{
+    background-color: #95A3B3;
+    border-radius: var(--radius-lg);
+    padding: var(--lg);
+    box-shadow: var(--boxs-lg);
+    display:inline-grid;
     align-items: center;
+    justify-content: center;
+    width: max-content;
+    margin-top: var(--sm) ;
+    margin-left: var(--sm) ;
+    margin-right: var(--md) ;
+    margin-bottom: var(--md) ;
+}
+.post__meta{
+    display:grid;
+    gap: 10px;
+}
+.post__tag--container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.post__tag {
+    padding: 3px 6px;
+    border-radius: var(--radius--sm);
+    color: hsl(var(--bkg));
+    font-size: var(--xsm);
+}
+.post__date {
+    font-size: var(--xsm);
+    text-decoration: uppercase;
+}
+.post__date,
+.post__author--name {
+    font-weight: 700;
+}
+.post__author {
+    display: flex;
+    gap: var(--sm);
+    align-items: center;
+}
+.post__author--avatart {
+    border-radius: 50%;
+    box-shadow: var(--boxs-sm);
+}
+.post__body {
+    line-height: 1.4;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    max-height: 7.3rem;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
+@media only screen and (max-width: 700px) {
+    .post{
+        width: 100%;
+    }
+    .post-container {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .post__meta{
+        display:flex;
+
+        width: 100%;
+    }
+
 }

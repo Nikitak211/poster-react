@@ -4,16 +4,18 @@
   font-family: "Helvetica Neue",Helvetica,Arial;
 }
 header{
+  position:relative ;
   width:100%;
   height:2em;
   margin:0 auto;
-  background-color: rgb(231, 231, 231);
+  background-color: #4B4E6D;
   border:1px solid transparent;
   border-radius:0 0 5px 5px;
   display: inline-flex;
   align-items: center;
   justify-content: space-evenly;
   box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.4);
+  z-index:1;
 }
   header ul {
   display: inline-flex;
@@ -22,6 +24,7 @@ header{
 }
 header ul li{
   margin: 0 auto;
+  width:max-content;
   display: flex;
   gap:1em;
   padding-left: 1em;
@@ -39,6 +42,29 @@ header ul li{
   .logout{
     margin-left: 20% ; 
   }
-}
 
-  
+}
+@media only screen and (max-width: 320px) {
+
+  header{
+    position: relative;
+    margin: 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-evenly;
+    z-index:1;
+  }
+  header ul {
+    display: inline-flex;
+    gap:1em;
+    width:max-content;
+  }
+  header ul li{
+    width:max-content;
+    font-size:10px;
+    margin: 0 auto;
+    display: flex;
+    gap:1em;
+    padding-left: 0.1em;
+  }
+}

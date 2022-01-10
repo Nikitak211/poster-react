@@ -48,7 +48,7 @@ const RegisterForm = () => {
         })}>
             <div>
                 <label className={errors.username?.message || success}>Username</label>
-                <small className={"small error"}>{errors.username?.message}</small>
+                <small className={errors.username?.message}>{errors.username?.message}</small>
                 <input type="username"
                     {...register("username", {
                         required: "cannot be empty",
@@ -60,28 +60,30 @@ const RegisterForm = () => {
             </div>
             <div>
                 <label className={errors.email?.message || success || error}>Email</label>
-                <small className={"small error"}>{errors.email?.message}</small>
+                <small className={errors.email?.message}>{errors.email?.message}</small>
                 <input type="email"
                     {...register("email", {
                         required: "email is required",
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: "invalid email address"
-                        }
+                        },
+                        validate: value => value === watch("emailValidation") || "email is not matching"
                     }
                     )}
                 ></input>
             </div>
             <div>
-                <label className={errors.email?.message || success || error}>Email Verification</label>
-                <small className={"small error"}>{errors.email?.message}</small>
+                <label className={errors.emailValidation?.message || success || error}>Email Verification</label>
+                <small className={errors.emailValidation?.message}>{errors.email?.message}</small>
                 <input type="email"
                     {...register("emailValidation", {
                         required: "email is required",
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: "invalid email address"
-                        }
+                        },
+                        validate: value => value === watch('email') || "email is not matching"
                     }
                     )}
                 ></input>

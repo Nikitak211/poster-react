@@ -4,7 +4,7 @@
     display: inline-flex;
 }
 .profile-picture{
-    border: 1px solid black;
+    border: 1px solid #84DCC6;
     border-radius:50%;
 }
 .profile-name{

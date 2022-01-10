@@ -1,7 +1,11 @@
+li .search_bar{
+    width:60%;
+}
 .search_bar{
     position: relative;
-    border: 1px solid transparent;
+    border: 0.2px solid #FFFFFF;
     border-radius: 5px;
+    box-shadow: 0 0 2px #FFFFFF;
     display:block;
     align-items: center;
     justify-self: center;
@@ -9,10 +13,11 @@
     height: 100%;
     left: 50% ; 
     outline: none;
+    background-color:#4B4E6D;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (min-width: 800px) {
     .search_bar{
-        left: 50% ; 
+        width: 50%;
     }
   }
