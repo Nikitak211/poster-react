@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 //Local imports
 const User = require('../models/User')
 const postSchema = require('../models/postSchema')
+const commentSchema = require('../models/commentSchema')
 
 router.use(express.json())
 
@@ -75,7 +76,7 @@ router.post('/login', async (req, res) => {
                         if (result) {
 
                             const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
-                            req.session.authorization = token    
+                            req.session.authorization = token
                             return res.send({
                                 success: true,
                                 isAuth: 'Login successfully',
@@ -126,23 +127,26 @@ router.post('/post', async (req, res) => {
             title,
             content
         } = req.body
-        
 
+        const HashId = await bcrypt.hash(content + title, 12);
         const token = req.session.authorization;
         if (token) {
             jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
                 if (err) {
                     res.locals.user = null;
                 } else {
-                    await User.findById(decodeToken._id).then((user,post) => {
+                    await User.findById(decodeToken._id).then((user, post) => {
                         post = new postSchema({
                             title,
                             content,
                             author: user.author,
                             avatar: user.avatar,
-                            date: new Date()
+                            date: new Date(),
+                            _id: HashId
                         })
                         post.save()
+                        user.posts.push(post)
+                        user.save()
                         res.send({
                             success: true,
                             message: 'post has been successfully saved'
@@ -158,12 +162,61 @@ router.post('/post', async (req, res) => {
         })
     }
 })
+router.post('/postcomment', async (req, res) => {
+    try {
+        const {
+            content,
+            _id
+        } = req.body
+
+
+        const token = req.session.authorization;
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
+                if (err) {
+                    res.send({
+                        error: true,
+                        message: err
+                    })
+                    res.locals.user = null;
+                } else {
+                    await User.findOne({ _id: decodeToken._id }).then(async (user) => {
+                        await postSchema.findOne({ _id: _id}).then((post, comment) => {
+                            // console.log(post)
+                            if (post !== null) {
+                                comment = new commentSchema({
+                                    content,
+                                    author: user.author,
+                                    avatar: user.avatar,
+                                    date: new Date()
+                                })
+                                comment.save()
+                                post.comments.push(comment)
+                                post.save()
+                                res.send({
+                                    success: true,
+                                    message: "comment sent!"
+                                })
+                            } else { return null }
+                        })
+                    })
+                }
+            })
+        }
+    } catch (error) {
+        res.send({
+            error: true,
+            message: error,
+        })
+    }
+})
 
 router.get('/post', async (req, res) => {
     postSchema.find()
-        .then(post => {
-            res.send(post)
+        .then((post) => {
+            res.send({ post })
         })
+
 })
 
 router.get('/logged', async (req, res) => {
