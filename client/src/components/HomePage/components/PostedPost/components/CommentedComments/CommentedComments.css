@@ -1,0 +1,32 @@
+.commented-containers{
+    border: 1px solid black;
+    display:gird;
+    border-radius: 5px;
+}
+.commented-text{
+    background-color:transparent;
+    resize: none;
+    outline: none;
+    width:100%;
+    border-radius: 5px ;
+}
+.commented-ul{
+    display: flex;
+    gap:5px;
+}
+.commented-li{
+    display: inline-flex;
+    
+    font-size: 1em;
+}
+.commented-li:hover{
+    cursor: pointer;
+    width:max-content;
+    height: max-content;
+    background: #4B4E6D;
+    border-radius:5px;
+}
+.comment-main{
+    display: grid;
+    gap:5px;
+}

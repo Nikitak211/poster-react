@@ -11,6 +11,7 @@ const CreatePost = () => {
     } = useForm();
 
     async function sendPost(tag, content) {
+        let axs =  content += tag
         const response = await axios.post('/api/auth/post', {
             title: tag,
             content: content

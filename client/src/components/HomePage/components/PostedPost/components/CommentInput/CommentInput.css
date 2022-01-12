@@ -1,0 +1,21 @@
+.comment-container{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.comment-area{
+    resize: none;
+    background-color:#FFFFFF;
+    border-radius: 5px;
+    color:#222222;
+    outline: none;
+}
+.comment-button{
+    border-radius: 5px;
+    color:#222222;
+    
+}
+.comment-area::-webkit-scrollbar {
+    width: 0;
+}

@@ -55,8 +55,8 @@ label{
 }
 .btn.btn-ul{
     display: flex;
-    align-items: start;
-    justify-content: start;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin:85px auto;
 }
 .btn.btn-li{
