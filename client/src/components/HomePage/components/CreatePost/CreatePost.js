@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react'
 import axios from 'axios';
 
 import './CreatePost.css'
@@ -10,26 +11,28 @@ const CreatePost = () => {
         formState: { errors }
     } = useForm();
 
-    async function sendPost(tag, content) {
-        let axs =  content += tag
-        const response = await axios.post('/api/auth/post', {
-            title: tag,
-            content: content
-        })
-        const Data = await response.data
+    async function sendPost(title, body) {
 
-        if (Data.success) {
-            window.location.reload()
-
-        }
+        await axios.post('/api/auth/post', {
+            title: title,
+            content: body
+        }).then(response => response.data)
+            .then(data => {
+                if (data.success) {
+                    window.location.reload()
+                }
+            })
     };
+    useEffect(() => {
+
+    }, [])
 
     return (
         <form className="create_post_arcticle" action="" onSubmit={handleSubmit((data) => {
             sendPost(data.tag, data.content)
         })}>
             <div className="container">
-                    <div className="formFillArea">
+                <div className="formFillArea">
                     <button className="btn_post">post</button>
                     <input type="text" placeholder="Title" className="post__tag"
                         {...register("tag", {
@@ -41,7 +44,7 @@ const CreatePost = () => {
                             required: "content is required",
                         }
                         )}></textarea>
-                    </div>
+                </div>
             </div>
         </form>
     );

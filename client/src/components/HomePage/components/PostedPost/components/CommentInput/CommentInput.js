@@ -25,30 +25,28 @@ const CommentInput = (props) => {
                 if (data.success) {
                     props.setSuccess(data.success)
                 }
-                if (data.error) return 
-
+                if (data.error) return
             })
             .catch(err => {
-                
+
             })
     }
-    
-    return ( 
+
+    return (
         <form
-        onSubmit={handleSubmit((data) => {
-            createPost(data.comment)
-            
-        })}>
+            onSubmit={handleSubmit((data) => {
+                createPost(data.comment)
+            })}>
             <div className="comment-container">
                 <textarea className="comment-area"
-                {...register("comment", {
-                    required: "cannot be empty"
-                }
-                )}></textarea>
+                    {...register("comment", {
+                        required: "cannot be empty"
+                    }
+                    )}></textarea>
                 <button className="comment-button">Comment</button>
             </div>
         </form>
-     );
+    );
 }
- 
+
 export default CommentInput;

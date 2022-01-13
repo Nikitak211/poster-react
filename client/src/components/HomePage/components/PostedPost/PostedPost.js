@@ -5,68 +5,55 @@ import CommentInput from './components/CommentInput/CommentInput'
 import CommentedComments from './components/CommentedComments/CommentedComments'
 import './PostedPost.css'
 
-let posts = []
-let filtered = []
-
-const PostedPost = () => {
+const PostedPost = (rootPosts) => {
+  rootPosts = rootPosts.posts
   const [success, setSuccess] = useState()
-  console.log(success)
-  
-  const Post = () => filtered.slice(0, posts.length).map(data => {
-    if (data !== undefined) {
-      const calendar = { year: 'numeric', day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
-      const returnPostDate = (date) =>
-        `${date.toLocaleDateString("en-US", calendar)}`;
-
-      return (
-        <article className="post" key={data._id}>
-          <div className="post__meta">
-            <div className="post__author">
-              <img className="post__author--avatar" width="55" src={data.avatar} alt={data.author}></img>
-              <div>
-                <p className="post__author--name">{data.author}</p>
-              </div>
-            </div>
-            <div className="post__tag--container">
-              <span className="post__tag">{data.title}</span>
-            </div>
-            <p className=" post__date">{returnPostDate(new Date(data.date))}</p>
-          </div>
-          <textarea className="post__body" value={data.content} disabled></textarea>
-          <CommentInput pending={data._id} setSuccess={setSuccess}/>
-          <CommentedComments success={success} data={data}/>
-        </article>
-      )
-    } else {
-      return null
+  const [comment, setComment] = useState([])
+  const rootComments = comment.filter(
+    (comments) => {
+      if (comments.length !== 0) {
+        let t1 = new Date()
+        let ct = comments.date
+        return new Date(ct) < t1
+      }
     }
-  })
+  )
 
-  const RecivePost = async () => {
-    const response = await axios.get('/api/auth/post')
-    const Data = await response.data.post
-    posts = Data
-
-    for (let i = posts.length - 1; i >= 0; i--) {
-      filtered.push(posts[i])
-    }
-  };
+  const calendar = { year: 'numeric', day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
+  const returnPostDate = (date) =>
+    `${date.toLocaleDateString("en-US", calendar)}`;
 
   useEffect(() => {
-    RecivePost()
+    axios.post('/api/auth/comments', { post_id: rootPosts._id })
+      .then(response => response.data.comment)
+      .then(data => {
+        if (data !== undefined) {
+          setComment(data)
+        }
+      })
   }, [])
 
-  if (posts === undefined) {
-    return (
-      <div>
-
+  return (
+    <article className="post" key={rootPosts._id}>
+      <div className="post__meta">
+        <div className="post__author">
+          <img className="post__author--avatar" width="55" src={rootPosts.avatar} alt={rootPosts.author}></img>
+          <div>
+            <p className="post__author--name">{rootPosts.author}</p>
+          </div>
+        </div>
+        <div className="post__tag--container">
+          <span className="post__tag">{rootPosts.title}</span>
+        </div>
+        <p className=" post__date">{returnPostDate(new Date(rootPosts.date))}</p>
       </div>
-    )
-  } else {
-    return (
-      <Post />
-    )
-  }
+      <textarea className="post__body" value={rootPosts.content} disabled></textarea>
+      <CommentInput setSuccess={setSuccess} pending={rootPosts._id} />
+      {rootComments.map(rootComments => (
+        <CommentedComments key={rootComments._id} rootComments={rootComments} success={success} />
+      ))}
+    </article>
+  )
 }
 
 export default PostedPost;

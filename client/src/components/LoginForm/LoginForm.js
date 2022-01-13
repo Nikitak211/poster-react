@@ -15,7 +15,6 @@ const LoginForm = () => {
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
-
     const LogUser = async (email, password) => {
         const user = {
             password: password,
@@ -32,8 +31,6 @@ const LoginForm = () => {
                     return window.location = "/";
                 }
                 if (data.error) return setError(data.message)
-                console.log(data)
-
             })
             .catch(err => {
                 setError(err.data.message)

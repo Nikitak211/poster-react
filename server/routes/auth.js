@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 
 //Local imports
 const User = require('../models/User')
-const postSchema = require('../models/postSchema')
-const commentSchema = require('../models/commentSchema')
+const Posts = require('../models/Posts')
+const Comments = require('../models/Comments')
 
 router.use(express.json())
 
@@ -64,7 +64,6 @@ router.post('/login', async (req, res) => {
         await User.findOne({ email })
             .then(user => {
                 if (user) {
-
                     bcrypt.compare(password, user.password, function (err, result) {
                         if (err) {
                             res.send({
@@ -72,9 +71,7 @@ router.post('/login', async (req, res) => {
                                 message: 'somthing went wrong'
                             })
                         }
-
                         if (result) {
-
                             const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
                             req.session.authorization = token
                             return res.send({
@@ -128,7 +125,6 @@ router.post('/post', async (req, res) => {
             content
         } = req.body
 
-        const HashId = await bcrypt.hash(content + title, 12);
         const token = req.session.authorization;
         if (token) {
             jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
@@ -136,17 +132,15 @@ router.post('/post', async (req, res) => {
                     res.locals.user = null;
                 } else {
                     await User.findById(decodeToken._id).then((user, post) => {
-                        post = new postSchema({
+                        post = new Posts({
                             title,
                             content,
                             author: user.author,
                             avatar: user.avatar,
                             date: new Date(),
-                            _id: HashId
+                            user_id: user.id
                         })
                         post.save()
-                        user.posts.push(post)
-                        user.save()
                         res.send({
                             success: true,
                             message: 'post has been successfully saved'
@@ -169,7 +163,6 @@ router.post('/postcomment', async (req, res) => {
             _id
         } = req.body
 
-
         const token = req.session.authorization;
         if (token) {
             jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
@@ -181,18 +174,17 @@ router.post('/postcomment', async (req, res) => {
                     res.locals.user = null;
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
-                        await postSchema.findOne({ _id: _id}).then((post, comment) => {
-                            // console.log(post)
+                        await Posts.findOne({ _id: _id }).then((post, comment) => {
                             if (post !== null) {
-                                comment = new commentSchema({
+                                comment = new Comments({
                                     content,
                                     author: user.author,
                                     avatar: user.avatar,
-                                    date: new Date()
+                                    date: new Date(),
+                                    user_id: user._id,
+                                    post_id: post._id
                                 })
                                 comment.save()
-                                post.comments.push(comment)
-                                post.save()
                                 res.send({
                                     success: true,
                                     message: "comment sent!"
@@ -212,11 +204,19 @@ router.post('/postcomment', async (req, res) => {
 })
 
 router.get('/post', async (req, res) => {
-    postSchema.find()
+    Posts.find()
         .then((post) => {
             res.send({ post })
         })
-
+})
+router.post('/comments', async (req, res) => {
+    const {
+        post_id
+    } = req.body
+    Comments.find({ post_id })
+        .then((comment) => {
+            res.send({ comment })
+        })
 })
 
 router.get('/logged', async (req, res) => {

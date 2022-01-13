@@ -35,7 +35,6 @@ const RegisterForm = () => {
                     return window.location = "/";
                 }
                 if (data.error) return setError(data.message)
-
             })
             .catch(err => {
                 setError(err.data.message)
@@ -53,7 +52,6 @@ const RegisterForm = () => {
                     {...register("username", {
                         required: "cannot be empty",
                         validate: value => !value.includes('@') || "cannot be email"
-
                     }
                     )}
                 ></input>
@@ -113,14 +111,12 @@ const RegisterForm = () => {
                             message: "minimum length is 8"
                         },
                         validate: value => value === watch('Password') || "password doesnt match"
-
                     })}
                 ></input>
             </div>
             <button>Sign Up</button>
         </form>
     );
-
 }
 
 export default RegisterForm;

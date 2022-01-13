@@ -3,21 +3,16 @@ import Search from './components/search/Search'
 import LogoutButton from '../components/LogoutButton/LogoutButton';
 import './Header.css'
 
-
-
 const Header = (props) => {
-    
-    
+
     return (
         <header>
-            <Profile props={props}/>
-            
+            <Profile props={props} />
             <ul>
-                <Search props={props.props}/>
-                <LogoutButton/>
+                <Search props={props.props} />
+                <LogoutButton />
             </ul>
         </header>
-
     );
 }
 

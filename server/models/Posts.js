@@ -2,12 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 //Schema creater and models
-const commentSchema = require('./commentSchema')
-
-const postSchema = new Schema([{
-    _id:{
-        type: String,
-    },
+const Post = new Schema([{
     author: {
         type: String
     },
@@ -23,9 +18,12 @@ const postSchema = new Schema([{
     date: {
         type: Date
     },
-    comments: [ commentSchema.schema ]
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }]);
 
-const postdata = mongoose.model('Post', postSchema);
+const Posts = mongoose.model('Post', Post);
 
-module.exports = postdata;
+module.exports = Posts;

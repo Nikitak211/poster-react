@@ -38,7 +38,7 @@ function App() {
       )
     } else {
       return (
-        <LoginForm/>
+        <LoginForm />
       )
     }
   }
@@ -62,7 +62,6 @@ function App() {
         <Header setVisibleLogin={setVisibleLogin} visibleLogin={visibleLogin} setVisibleRegister={setVisibleRegister} visibleRegister={visibleRegister} />
         <VisibleLogin />
         <VisibleRegister />
-
       </div>
     )
   }
@@ -75,11 +74,8 @@ function App() {
   }
 
   return (
-    <div>
-      
-    </div>
+    <div></div>
   );
-
 }
 
 export default App;
