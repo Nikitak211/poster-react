@@ -22,6 +22,9 @@ const Comment = new Schema([{
     post_id: {
         type: Schema.Types.ObjectId,
         ref: 'Post'
+    },
+    status: {
+        type: Boolean
     }
 }]);
 

@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User')
 const Posts = require('../models/Posts')
 const Comments = require('../models/Comments')
+const Like = require('../models/Likes')
+const DisLikes = require('../models/DisLikes');
 
 router.use(express.json())
 
@@ -62,7 +64,7 @@ router.post('/login', async (req, res) => {
         } = req.body
 
         await User.findOne({ email })
-            .then(user => {
+            .then(async user => {
                 if (user) {
                     bcrypt.compare(password, user.password, function (err, result) {
                         if (err) {
@@ -86,6 +88,26 @@ router.post('/login', async (req, res) => {
                             });
                         }
                     })
+                    await Posts.find({ user_id: user._id })
+                        .then(async (post) => {
+                            if (post !== null) {
+                                post.map(posts => {
+                                    posts.status = true
+                                    posts.save()
+                                })
+                            } else { return null }
+                            await Comments.find({ user_id: user._id })
+                                .then((comment) => {
+                                    if (comment !== null) {
+                                        comment.map(comments => {
+                                            comments.status = true
+                                            comments.save()
+                                        })
+                                    } else { return null }
+                                })
+                        })
+                    user.status = true;
+                    user.save()
                 } else {
                     res.send({
                         error: true,
@@ -101,21 +123,120 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
+    const token = req.session.authorization;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
+            if (err) {
+                req.session.destroy((error) => {
+                    if (!error) {
+                        res.send({
+                            success: true,
+                            message: "Logged out."
+                        })
+                    }
+                    if (error) {
+                        res.send({
+                            error: true,
+                            message: 'an error has been encountered'
+                        })
+                    };
+                })
+                res.locals.user = null;
+            } else {
+                await User.findByIdAndUpdate(decodeToken._id).then(async (user) => {
+                    await Posts.find({ user_id: user._id })
+                        .then(async (post) => {
+                            if (post !== null) {
+                                post.map(posts => {
+                                    posts.status = false
+                                    posts.save()
+                                })
+                            } else { return null }
+                            await Comments.find({ user_id: user._id })
+                                .then((comment) => {
+                                    if (comment !== null) {
+                                        comment.map(comments => {
+                                            comments.status = false
+                                            comments.save()
+                                        })
+                                    } else { return null }
+                                })
+                        })
+                    user.status = false
+                    user.save()
+                    req.session.destroy((error) => {
+                        if (!error) {
+                            res.send({
+                                success: true,
+                                message: "Logged out."
+                            })
+                        }
+                        if (error) {
+                            res.send({
+                                error: true,
+                                message: 'an error has been encountered'
+                            })
+                        };
+                    })
+                }).catch((error) => {
+                    res.send({
+                        error: true,
+                        message: error,
+                    });
+                });
+            }
+        })
+    } else {
+        res.send({
+            outdated: true,
+        })
+    }
+})
+router.post('/deletePost', (req, res) => {
+    const {
+        post_id
+    } = req.body;
 
-    req.session.destroy((error) => {
-        if (!error) {
-            res.send({
-                success: true,
-                message: "Logged out."
-            })
-        }
-        if (error) {
-            res.send({
-                error: true,
-                message: 'an error has been encountered'
-            })
-        };
-    })
+    console.log(post_id)
+
+    const token = req.session.authorization;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
+            if (err) {
+                res.send({
+                    outdated: true,
+                })
+                res.locals.user = null;
+            } else {
+                await User.findByIdAndUpdate(decodeToken._id).then(async (user) => {
+                    await Posts.findByIdAndRemove({ _id: post_id })
+                        .then(async (post) => {
+
+                            await Comments.deleteMany({ post_id: post._id })
+                                .then((comment) => {
+                                    if (comment !== null) {
+                                        res.send({
+                                            success: true,
+                                            message: "post has been deleted"
+                                        })
+                                    } else { return null }
+                                })
+
+                        })
+
+                }).catch((error) => {
+                    res.send({
+                        error: true,
+                        message: error,
+                    });
+                });
+            }
+        })
+    } else {
+        res.send({
+            outdated: true,
+        })
+    }
 })
 
 router.post('/post', async (req, res) => {
@@ -138,7 +259,8 @@ router.post('/post', async (req, res) => {
                             author: user.author,
                             avatar: user.avatar,
                             date: new Date(),
-                            user_id: user.id
+                            user_id: user.id,
+                            status: user.status,
                         })
                         post.save()
                         res.send({
@@ -182,7 +304,8 @@ router.post('/postcomment', async (req, res) => {
                                     avatar: user.avatar,
                                     date: new Date(),
                                     user_id: user._id,
-                                    post_id: post._id
+                                    post_id: post._id,
+                                    status: user.status
                                 })
                                 comment.save()
                                 res.send({
@@ -203,12 +326,164 @@ router.post('/postcomment', async (req, res) => {
     }
 })
 
+router.post('/likeComments', async (req, res) => {
+    try {
+        const {
+            comment_id
+        } = req.body
+
+        const token = req.session.authorization;
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
+                if (err) {
+                    res.send({
+                        error: true,
+                        message: err
+                    })
+                    res.locals.user = null;
+                } else {
+                    await User.findOne({ _id: decodeToken._id }).then(async (user) => {
+                        await Comments.findById({ _id: comment_id }).then(async (comment) => {
+
+                            await Like.find({ user_id: user._id }).then(async like => {
+                                if (like[0] !== undefined) {
+                                    await Like.deleteMany({ user_id: user._id })
+                                        .then(async liked => {
+                                            if (liked !== null) {
+                                                res.send({
+                                                    succsess: true,
+                                                    message: "removed like"
+                                                })
+                                            }
+                                        })
+                                } else {
+                                    like = new Like({
+                                        user_id: user._id,
+                                        comment_id: comment._id
+                                    })
+                                    like.save()
+                                    res.send({
+                                        succsess: true,
+                                        message: "liked comment"
+                                    })
+                                }
+                            })
+                        })
+                    })
+                }
+            })
+        }
+    } catch (error) {
+        res.send({
+            error: true,
+            message: error,
+        })
+    }
+})
+
+router.get('/likeComments/:comment_id', async (req, res) => {
+    try {
+        const {
+            comment_id
+        } = req.params
+
+        await Comments.findById({ _id: comment_id }).then(async comment => {
+            await Like.find({ comment_id: comment._id }).then(async like => {
+                res.send({
+                    like
+                })
+            })
+        })
+    } catch (error) {
+        res.send({
+            error: true,
+            message: error,
+        })
+    }
+})
+
+router.post('/dislikeComments', async (req, res) => {
+    try {
+        const {
+            comment_id
+        } = req.body
+
+        const token = req.session.authorization;
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
+                if (err) {
+                    res.send({
+                        error: true,
+                        message: err
+                    })
+                    res.locals.user = null;
+                } else {
+                    await User.findOne({ _id: decodeToken._id }).then(async (user) => {
+                        await Comments.findById({ _id: comment_id }).then(async (comment) => {
+                            await DisLikes.find({ user_id: user._id }).then(async dislike => {
+                                if (dislike[0] !== undefined) {
+                                    await DisLikes.deleteMany({ user_id: user._id })
+                                        .then(async disliked => {
+                                            if (disliked !== null) {
+                                                res.send({
+                                                    succsess: true,
+                                                    message: "removed dislike"
+                                                })
+                                            }
+                                        })
+                                } else {
+                                    dislike = new DisLikes({
+                                        user_id: user._id,
+                                        comment_id: comment._id
+                                    })
+                                    dislike.save()
+                                    res.send({
+                                        succsess: true,
+                                        message: "disliked comment"
+                                    })
+                                }
+                            })
+                        })
+                    })
+                }
+            })
+        }
+    } catch (error) {
+        res.send({
+            error: true,
+            message: error,
+        })
+    }
+})
+
+router.get('/dislikeComments/:comment_id', async (req, res) => {
+    try {
+        const {
+            comment_id
+        } = req.params
+
+        await Comments.findById({ _id: comment_id }).then(async comment => {
+            await DisLikes.find({ comment_id: comment._id }).then(async dislike => {
+                res.send({
+                    dislike
+                })
+            })
+        })
+    } catch (error) {
+        res.send({
+            error: true,
+            message: error,
+        })
+    }
+})
+
 router.get('/post', async (req, res) => {
     Posts.find()
         .then((post) => {
             res.send({ post })
         })
 })
+
 router.post('/comments', async (req, res) => {
     const {
         post_id
@@ -229,12 +504,35 @@ router.get('/logged', async (req, res) => {
                 })
                 res.locals.user = null;
             } else {
-                await User.findById(decodeToken._id).then(user => {
+                await User.findByIdAndUpdate(decodeToken._id).then(async (user) => {
+                    await Posts.find({ user_id: user._id })
+                        .then(async (post) => {
+
+                            if (post !== null) {
+                                post.map(posts => {
+                                    posts.status = true
+                                    posts.save()
+                                })
+                            } else { return null }
+                            await Comments.find({ user_id: user._id })
+                                .then((comment) => {
+
+                                    if (comment !== null) {
+                                        comment.map(comments => {
+                                            comments.status = true
+                                            comments.save()
+                                        })
+                                    } else { return null }
+                                })
+                        })
+                    user.status = true
+                    user.save()
                     res.send({
                         success: true,
                         exp: decodeToken.exp,
                         author: user.author,
-                        avatar: user.avatar
+                        avatar: user.avatar,
+                        status: user.status
                     })
                 }).catch((error) => {
                     res.send({

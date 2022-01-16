@@ -21,6 +21,9 @@ const Post = new Schema([{
     user_id: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    status: {
+        type: Boolean
     }
 }]);
 

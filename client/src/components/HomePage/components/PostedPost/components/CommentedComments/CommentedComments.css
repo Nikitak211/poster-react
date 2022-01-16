@@ -1,7 +1,8 @@
 .commented-containers{
-    border: 1px solid black;
-    display:gird;
-    border-radius: 5px;
+    border-top: 1px solid rgba(0, 0, 0, 0.387);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.523);
+    display:grid;
+    border-radius: 1px;
 }
 .commented-text{
     background-color:transparent;
@@ -11,6 +12,8 @@
     border-radius: 5px ;
 }
 .commented-ul{
+    width:100%;
+    height:100%;
     display: flex;
     gap:5px;
 }
@@ -18,6 +21,10 @@
     display: inline-flex;
     
     font-size: 1em;
+}
+.img-comment{
+    width:3em;
+    height:3em;
 }
 .commented-li:hover{
     cursor: pointer;
@@ -29,4 +36,40 @@
 .comment-main{
     display: grid;
     gap:5px;
+}
+.comments-online {
+    background-color:rgb(163, 241, 45);
+    width:0.3em;
+    height:0.3em;
+    border-radius: 50%;
+    margin-left: -0.5em;
+    margin-top:0.3em;
+}
+.comments-offline {
+    background-color:rgb(253, 55, 55);
+    width:0.3em;
+    height:0.3em;
+    border-radius: 50%;
+    margin-left: -0.5em;
+    margin-top:0.3em;
+}
+@media only screen and (max-width: 350px) {
+    .commented-ul{
+        font-size:10px;
+    }
+    .comments-online,
+    .comments-offline{
+        width:1em;
+        height:1em;
+    }
+    .commented-containers{
+        width: 12em;
+        height: fit-content;
+        margin: 0 auto;
+    }
+    .comments-likes,
+    .comments-dislikes{
+        font-size:6px;
+    }
+
 }

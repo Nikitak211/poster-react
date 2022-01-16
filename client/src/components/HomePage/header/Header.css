@@ -38,6 +38,7 @@ header ul li{
 .logo{
   margin:0 auto;
 }
+
 @media only screen and (max-width: 800px) {
   .logout{
     margin-left: 20% ; 
@@ -68,3 +69,4 @@ header ul li{
     padding-left: 0.1em;
   }
 }
+

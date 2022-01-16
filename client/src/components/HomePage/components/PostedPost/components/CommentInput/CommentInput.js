@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import './CommentInput.css'
 
-const CommentInput = (props) => {
+const CommentInput = ({pending,setSuccess}) => {
     const {
         register,
         handleSubmit,
@@ -14,7 +14,7 @@ const CommentInput = (props) => {
     const createPost = async (comment) => {
         const newComment = {
             content: comment,
-            _id: props.pending
+            _id: pending
         }
         const api = axios.create({
             baseUrl: 'http://localhost:7000'
@@ -23,7 +23,8 @@ const CommentInput = (props) => {
             .then(response => {
                 let data = response.data
                 if (data.success) {
-                    props.setSuccess(data.success)
+                    console.log(data.success)
+                    setSuccess(data.success)
                 }
                 if (data.error) return
             })

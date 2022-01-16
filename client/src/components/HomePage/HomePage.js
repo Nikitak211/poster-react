@@ -4,11 +4,13 @@ import axios from 'axios';
 import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
+import ProfileSettings from './components/ProfileSettings/ProfileSettings';
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
+    const [visibleProfileSettings,setVisibleProfileSettings] = useState(false)
 
     const rootPosts = posts.filter(
         (post) => {
@@ -33,6 +35,7 @@ const HomePage = () => {
                 const json = await response.data
 
                 if (json.success) {
+                    console.log('up')
                     window.location.reload()
                     alert(json.message)
                 }
@@ -57,8 +60,9 @@ const HomePage = () => {
 
     return (
         <div>
-            <Header profile={profile} profileName={profileName} />
+            <Header profileSettings={setVisibleProfileSettings} profile={profile} profileName={profileName} />
             <CreatePost />
+            <ProfileSettings visibleProfileSettings={visibleProfileSettings} />
             <div>
                 {rootPosts.map(rootPost => (
                     <PostedPost key={rootPost._id} posts={rootPost} />

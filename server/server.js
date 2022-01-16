@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -18,6 +19,12 @@ const topSecret = require('./routes/authed')
 
 // MongoDBUri form env file goes here.
 const mongoDBUri = process.env.MONGODB_URI
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// Set EJS as templating engine 
+app.set("view engine", "ejs");
 
 mongoose.connect(mongoDBUri,
     {
@@ -42,6 +49,9 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }))
+
+
+
 
 const isAuth = (req, res, next) => {
     try {
