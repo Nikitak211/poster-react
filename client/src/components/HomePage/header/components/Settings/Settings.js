@@ -1,6 +1,7 @@
 import {useState,useEffect} from 'react'
 
 import  Profile from './components/Profile/Profile'
+import LogoutButton from '../LogoutButton/LogoutButton';
 
 import './Settings.css'
 
@@ -25,6 +26,7 @@ const Settings = (props) => {
                         <div onClick={Clicked} className="settings-container"></div>
                         <ul className="settings-ul">
                         <Profile props={props}/>
+                        <LogoutButton />
                         </ul>
                         
                     </div>

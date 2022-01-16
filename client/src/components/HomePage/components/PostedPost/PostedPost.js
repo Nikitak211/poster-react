@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import * as timeago from 'timeago.js'
 
 import CommentInput from './components/CommentInput/CommentInput'
 import CommentedComments from './components/CommentedComments/CommentedComments'
 import './PostedPost.css'
 
 const PostedPost = (rootPosts) => {
-  rootPosts = rootPosts.posts
+
+  let posts = rootPosts.posts
   const [success, setSuccess] = useState()
   const [comment, setComment] = useState([])
   const [status, setStatus] = useState('offline')
+  const [clicked, setClicked] = useState(false)
 
   const rootComments = comment.filter(
     (comments) => {
@@ -27,61 +30,98 @@ const PostedPost = (rootPosts) => {
 
   }
 
+  const click = () => {
+    if (clicked) {
+      setClicked(false)
+    } else {
+      setClicked(true)
+    }
+  }
+  
+  const ShowComments = () => {
+    if(rootComments.length == 0) {
+      return (
+        <div className="show-comments-container">
+        </div>
+      )
+    } else {
+    if(clicked) {
+      return (
+        <div className="post__comments-container">
+           {rootComments.map(rootComments => (
+            <CommentedComments key={rootComments._id} rootComments={rootComments} />
+          ))}
+          <button onClick={click} className='show-comments'>-</button>
+        </div>
+      )
+    } else {
+      
+        return (
+          <div className="show-comments-container">
+             <small className='show-comments-count'>{rootComments.length + 'Comments'}</small>
+            <button onClick={click} className='show-comments'>+</button>
+          </div>
+        )
+      }
+    }
+  }
+
   const deletePosts = async () => {
-    await axios.post('/api/auth/deletePost', { post_id: rootPosts._id })
+    await axios.post('/api/auth/deletePost', { post_id: posts._id })
       .then(response => response.data)
       .then(data => {
         if (data.success) {
           window.location.reload()
         }
         if (data.error) {
-          alert(data.message)
+          return null
         }
       })
   }
 
-  const calendar = { year: 'numeric', day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
-  const returnPostDate = (date) =>
-    `${date.toLocaleDateString("en-US", calendar)}`;
-
+  const returnPostDate = (date) => {
+    return timeago.format(new Date(date));
+  }
+  
   useEffect(() => {
-    if (rootPosts.status) {
+    if (rootPosts.posts.status) {
       setStatus('post-online')
     } else {
       setStatus('post-offline')
     }
 
-    axios.post('/api/auth/comments', { post_id: rootPosts._id })
+    axios.post('/api/auth/comments', { post_id: posts._id })
       .then(response => response.data.comment)
       .then(data => {
         if (data !== undefined) {
           setComment(data)
         }
       })
-  }, [])
+  }, [success])
 
   return (
-    <article className="post" key={rootPosts._id}>
+    <article className="post" key={posts._id}>
       <div className="post-content">
         <div className="post__meta">
           <div className="post__author">
-            <img className="post__author--avatar" width="55" src={rootPosts.avatar} alt={rootPosts.author}></img>
+            <img className="post__author--avatar" width="55" src={posts.avatar} alt={posts.author}></img>
             <div className={status}></div>
             <div>
-              <p className="post__author--name">{rootPosts.author}</p>
+              <p className="post__author--name">{posts.author}</p>
+              <p className=" post__date">{returnPostDate(new Date(posts.date))}</p>
             </div>
+
           </div>
-          <div className="post__tag--container">
-            <span className="post__tag">{rootPosts.title}</span>
-          </div>
-          <div className="post__date-delete" ><p className=" post__date">{returnPostDate(new Date(rootPosts.date))}</p><p onClick={deletePosts} className="post__delete"></p></div>
+          
         </div>
-        <textarea className="post__body" value={rootPosts.content} disabled></textarea>
-        <CommentInput setSuccess={setSuccess} pending={rootPosts._id} />
-        <div className="post__comments-container">
-          {rootComments.map(rootComments => (
-            <CommentedComments key={rootComments._id} rootComments={rootComments} />
-          ))}
+        <textarea className="post__body" value={posts.content} disabled></textarea>
+        <div className="inline-inputs">
+        <CommentInput avatar={rootPosts.avatar} setSuccess={setSuccess} pending={posts._id} />
+          <p onClick={deletePosts} className="post__delete"></p>
+        </div>
+        
+        <div >
+          <ShowComments/>
         </div>
 
       </div>

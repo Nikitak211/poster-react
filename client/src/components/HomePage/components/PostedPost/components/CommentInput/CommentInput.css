@@ -4,17 +4,32 @@
     align-items: center;
     gap: 5px;
 }
+.input-area{
+    width: auto;
+    background-color:#79889a;
+    border-radius: 25px 25px 25px 25px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+}
+.profile-picture-comments{
+    width: 2em;
+    height: 2em;
+    border: 1px solid #84DCC6;
+    border-radius:50%;
+}
 .comment-area{
     resize: none;
-    background-color:#FFFFFF;
+    background-color:transparent;
     border-radius: 5px;
+    height: fit-content;
     color:#222222;
     outline: none;
 }
 .comment-button{
     border-radius: 5px;
     color:#222222;
-    
 }
 .comment-area::-webkit-scrollbar {
     width: 0;

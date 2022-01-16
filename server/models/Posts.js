@@ -6,9 +6,6 @@ const Post = new Schema([{
     author: {
         type: String
     },
-    title: {
-        type: String
-    },
     content: {
         type: String
     },

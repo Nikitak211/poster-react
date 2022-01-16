@@ -209,21 +209,22 @@ router.post('/deletePost', (req, res) => {
                 res.locals.user = null;
             } else {
                 await User.findByIdAndUpdate(decodeToken._id).then(async (user) => {
-                    await Posts.findByIdAndRemove({ _id: post_id })
+                    await Posts.findOneAndRemove({ user_id: user._id, _id: post_id })
                         .then(async (post) => {
 
-                            await Comments.deleteMany({ post_id: post._id })
-                                .then((comment) => {
-                                    if (comment !== null) {
-                                        res.send({
-                                            success: true,
-                                            message: "post has been deleted"
-                                        })
-                                    } else { return null }
+                            await Comments.deleteMany({ post_id: post._id }).then(async (comment) => {
+                                await Like.deleteMany({ post_id: post._id }).then(async like => {
+                                    await DisLikes.deleteMany({ post_id: post._id }).then(dislike => {
+                                        if (comment !== null) {
+                                            res.send({
+                                                success: true,
+                                                message: "post has been deleted"
+                                            })
+                                        } else { return null }
+                                    })
                                 })
-
+                            })
                         })
-
                 }).catch((error) => {
                     res.send({
                         error: true,
@@ -242,7 +243,6 @@ router.post('/deletePost', (req, res) => {
 router.post('/post', async (req, res) => {
     try {
         const {
-            title,
             content
         } = req.body
 
@@ -254,7 +254,6 @@ router.post('/post', async (req, res) => {
                 } else {
                     await User.findById(decodeToken._id).then((user, post) => {
                         post = new Posts({
-                            title,
                             content,
                             author: user.author,
                             avatar: user.avatar,

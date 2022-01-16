@@ -1,19 +1,15 @@
 
-.container{
-    position: relative;
-    display:grid;
+.container-1{
+    display:flex;
     grid-template-rows:auto auto 1fr;
     gap: var(--sm);
     max-width: 1400px;
-    z-index:0;
-    margin: -3% auto ;
 }
-.post___body{
-    width: 100%;
+.post___body-text{
+    width: 19em;
     resize: none;
     outline: none;
-    padding-bottom: 10em;
-    border-radius:  0 0 15px 15px;
+    height: fit-content;
 }
 .create_post_arcticle{
     background-color:transparent;
@@ -21,71 +17,46 @@
     max-width:400px;
     min-width: 180px;
 }
-.btn_post{
+.btn_post-c{
     margin:0 auto;
     display:flex;
     align-items: center;
     height: var(--sm);
     background: #95A3B3;
-    color:#FFFFFF;
+    color:#222222;
     width: var(--xlg);
     border-radius:var(--radius--sm);
     
 }
-.post__tag{
-    padding: 3px 6px;
-    border-radius: var(--radius--sm);
+
+.post___body-text{
     background-color: transparent;
-    color: hsl(var(--bkg));
-    font-size: 10px;
-}
-.post___body{
-    background-color: #FFFFFF;
-    border:0.5px dashed hsl(var(--accent2) /50%);
+    border-bottom:0.5px dashed hsl(var(--accent2) /50%);
     line-height: 1.4;
     overflow: hidden;
     -webkit-line-clamp: 4;
     display: -webkit-box;
-    max-height: 7.3rem;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     color: #222222;
 }
-.post___body::placeholder{
-    color:#4B4E6D;
+.post___body-text::placeholder{
+    color:#222222;
 }
 .formFillArea{
     width: auto ;
     background-color: #4B4E6D;
-    border-radius: 0 0 15px 15px;
-    display:flex;
+    display:flex-inline;
     gap:5px;
     z-index:1;
+    width: 20em;
 }
-input.post__tag {
-    width:10em;
-    border:0.5px dashed hsl(var(--accent2) /50%);
-    outline: none;
+
+.textare-inline-2c{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    width: 20em ;
 }
-@media only screen and (max-width: 700px) {
-    .container{
-        position: relative;
-        margin-top:-3.9%;
-        z-index:0;
-    }
-}
-@media only screen and (max-width: 300px) {
-    .container{
-        margin-top:-4.6%;
-    }
-}
-@media only screen and (max-width: 250px) {
-    .container{
-        margin-top:-5.1%;
-    }
-}
-@media only screen and (max-width: 200px) {
-    .container{
-        margin-top:-6.6%;
-    }
-}
+

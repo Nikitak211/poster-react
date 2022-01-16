@@ -4,17 +4,16 @@ import axios from 'axios';
 
 import './CreatePost.css'
 
-const CreatePost = () => {
+const CreatePost = (props) => {
     const {
         register,
         handleSubmit,
         formState: { errors }
     } = useForm();
 
-    async function sendPost(title, body) {
+    async function sendPost(body) {
 
         await axios.post('/api/auth/post', {
-            title: title,
             content: body
         }).then(response => response.data)
             .then(data => {
@@ -29,21 +28,19 @@ const CreatePost = () => {
 
     return (
         <form className="create_post_arcticle" action="" onSubmit={handleSubmit((data) => {
-            sendPost(data.tag, data.content)
+            sendPost(data.content)
         })}>
-            <div className="container">
+            <div className="container-1">
                 <div className="formFillArea">
-                    <button className="btn_post">post</button>
-                    <input type="text" placeholder="Title" className="post__tag"
-                        {...register("tag", {
-                            required: "tag is required",
-                        }
-                        )} ></input>
-                    <textarea placeholder="write your post here..." className="post___body"
+                    <div className="textare-inline-2c">
+                    <img src={props.avatar} className="profile-picture-comments"></img>
+                    <textarea placeholder="write your post here..." className="post___body-text"
                         {...register("content", {
                             required: "content is required",
                         }
                         )}></textarea>
+                    </div>
+                    <button className="btn_post-c">post</button>
                 </div>
             </div>
         </form>

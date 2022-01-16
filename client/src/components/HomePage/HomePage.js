@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import './HomePage.css'
+
 import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
@@ -61,11 +63,11 @@ const HomePage = () => {
     return (
         <div>
             <Header profileSettings={setVisibleProfileSettings} profile={profile} profileName={profileName} />
-            <CreatePost />
+            <CreatePost avatar={profile} />
             <ProfileSettings visibleProfileSettings={visibleProfileSettings} />
-            <div>
+            <div className="posts">
                 {rootPosts.map(rootPost => (
-                    <PostedPost key={rootPost._id} posts={rootPost} />
+                    <PostedPost avatar={profile} key={rootPost._id} posts={rootPost} />
                 ))}
             </div>
 
