@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import axios from 'axios';
 
 import Header from "./components/header/Header";
 import LoginForm from "./components/LoginForm/LoginForm";
 import HomePage from './components/HomePage/HomePage';
 import RegisterForm from "./components/RegisterForm/RegisterForm";
+import ProfileSettings from './components/HomePage/components/ProfileSettings/ProfileSettings';
 
 function App() {
 
@@ -68,7 +71,12 @@ function App() {
   if (token) {
     return (
       <div>
-        <HomePage />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<ProfileSettings/>} />
+          </Routes>
+        </BrowserRouter>
       </div>
     )
   }

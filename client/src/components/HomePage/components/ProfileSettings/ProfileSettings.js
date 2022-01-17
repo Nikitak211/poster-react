@@ -1,51 +1,90 @@
 import React from 'react';
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form';
 
 import axios from 'axios';
 
+import PostedPost from '../PostedPost/PostedPost';
+import CreatePost from '../CreatePost/CreatePost'
+import Header from '../../header/Header';
+
 import './ProfileSettings.css'
 
-const ProfileSettings = ({ visibleProfileSettings }) => {
+const ProfileSettings = () => {
+    const [verify, setVerify] = useState()
+    const [deletePosts, setDeletePosts] = useState()
+    const [createPost, setCreatePost] = useState()
+    const [posts, setPosts] = useState([]);
+    const [search, setSearch] = useState()
+    const [profile, setProfile] = useState();
+    const [profileName, setProfileName] = useState();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch
-    } = useForm();
+
+    const logout = async () => {
+        const response = await axios.post('/api/auth/logout')
+        const json = await response.data
+
+        if (json.success) {
+            window.location.reload()
+            alert(json.message)
+        }
+        if (json.error) alert(json.message)
+    }
+
+    const loadProfile = async () => {
+        const response = await axios('/api/auth/logged')
+        const Data = await response.data
+        const exp = new Date(Data.exp * 1000)
+        const time = new Date()
+        const outdated = Data.outdated
+
+        if (time === exp || outdated) {
+            logout()
+        }
+        if (Data !== undefined) {
+            setVerify(Data._id)
+            setProfile(Data.avatar);
+            setProfileName(Data.author)
+        } else { return }
+
+    }
 
     useEffect(() => {
+        let isSubscribed = true;
+        loadProfile()
+        if (verify !== undefined) {
+            axios.get(`/api/auth/post/${verify}`)
+                .then(response => response.data.post)
+                .then(Data => {
+                    if (isSubscribed) {
+                        setPosts(Data)
+                        setDeletePosts()
+                        setCreatePost()
+                    }
+                })
+        } 
+        return () => { isSubscribed = false }
+    }, [search, deletePosts, createPost, profile])
 
-    }, [])
-    if (!visibleProfileSettings) {
-        return (
-            <div> </div>
-        );
-    } else {
-        return (
-            <div className="profile-settings-container">
-                <div className="container-header">
-                    <h2>Profile</h2>
+    return (
+        <div className="profile-settings-container">
+            <Header setSearch={setSearch} />
+            <div className="container-header">
+                <div className="profile-main-avatar">
+                    <img width={100} src={profile} alt={profileName}></img>
                 </div>
-                <div className="container-body">
-                    <form onSubmit={handleSubmit((e, data) => {
-                        e.preventDefault();
-                    })} >
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/png, image/jpg"
-                            {...register("image", {
-                                required: true,
-                            })}
-                        />
-                        <button>Upload</button>
-                    </form>
+
+                <h2>{profileName}</h2>
+            </div>
+            <div className="container-body">
+                <CreatePost setCreatePost={setCreatePost} avatar={profile} />
+                <div className="posts">
+                    {posts.map(rootPost => (
+                        <PostedPost setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
+                    ))}
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default ProfileSettings;

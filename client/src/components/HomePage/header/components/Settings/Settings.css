@@ -1,14 +1,15 @@
 .settings-meta{
     position: relative;
     margin:auto;
+    z-index: 50;
 }
 .settings-open-container{
     position: relative;
     width: 7em;
     height:0;
     margin: auto;
-    background: #4B4E6D;
-    bottom: 0.5em;
+    background: #f2f2f2;
+    bottom: 0.3em;
     border: 1px solid transparent;
     border-radius:0 0 0 5px;
     overflow: hidden;
@@ -20,6 +21,13 @@
     width: 100%;
     height: fit-content;
 
+}
+.settings-container-box{
+    position: relative;
+    width: 112px;
+    height: 32px;
+    background-color:#4B4E6D;
+    z-index: 1;
 }
 .settings-container{
     position: relative;
@@ -33,7 +41,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     cursor: pointer;
-    z-index: 2;
+    z-index: 0;
+    
 }
 .settings-open-container.show {
     visibility: visible;
@@ -55,6 +64,7 @@
     height: 2em;
     margin-top:0.5em;
     color: #222222;
+    display: inline-flex;
     border-bottom: 1px solid #222222;
     justify-content: center;
     align-self: center;
@@ -67,4 +77,8 @@
     border-bottom: 1px solid #222222;
     justify-content: center;
     align-self: center;
+}
+.setting-profile-tag{
+    color: #222222;
+    text-decoration: none;
 }

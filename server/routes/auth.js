@@ -130,13 +130,13 @@ router.post('/logout', (req, res) => {
                 req.session.destroy((error) => {
                     if (!error) {
                         res.send({
-                            success: true,
+                            outdated: true,
                             message: "Logged out."
                         })
                     }
                     if (error) {
                         res.send({
-                            error: true,
+                            outdated: true,
                             message: 'an error has been encountered'
                         })
                     };
@@ -341,9 +341,9 @@ router.post('/likeComments', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Comments.findById({ _id: comment_id }).then(async (comment) => {
-                            await Like.find({ user_id: user._id, comment_id:comment._id }).then(async like => {
+                            await Like.find({ user_id: user._id, comment_id: comment._id }).then(async like => {
                                 if (like[0] !== undefined) {
-                                    await Like.deleteMany({user_id: user._id, comment_id:comment._id })
+                                    await Like.deleteMany({ user_id: user._id, comment_id: comment._id })
                                         .then(async liked => {
                                             if (liked !== null) {
                                                 res.send({
@@ -416,9 +416,9 @@ router.post('/dislikeComments', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Comments.findById({ _id: comment_id }).then(async (comment) => {
-                            await DisLikes.find({ user_id: user._id, comment_id:comment._id }).then(async dislike => {
+                            await DisLikes.find({ user_id: user._id, comment_id: comment._id }).then(async dislike => {
                                 if (dislike[0] !== undefined) {
-                                    await DisLikes.deleteMany({ user_id: user._id, comment_id:comment._id })
+                                    await DisLikes.deleteMany({ user_id: user._id, comment_id: comment._id })
                                         .then(async disliked => {
                                             if (disliked !== null) {
                                                 res.send({
@@ -490,9 +490,9 @@ router.post('/likePost', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Posts.findById({ _id: post_id }).then(async (post) => {
-                            await Like.find({ user_id: user._id, post_id:post._id }).then(async like => {
+                            await Like.find({ user_id: user._id, post_id: post._id }).then(async like => {
                                 if (like[0] !== undefined) {
-                                    await Like.deleteMany({user_id: user._id, post_id:post._id })
+                                    await Like.deleteMany({ user_id: user._id, post_id: post._id })
                                         .then(async liked => {
                                             if (liked !== null) {
                                                 res.send({
@@ -533,7 +533,7 @@ router.get('/likePost/:post_id', async (req, res) => {
         } = req.params
 
         await Posts.findById({ _id: post_id }).then(async post => {
-            await Like.find({ post_id:post._id }).then(async like => {
+            await Like.find({ post_id: post._id }).then(async like => {
                 res.send({
                     like
                 })
@@ -565,9 +565,9 @@ router.post('/dislikePost', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Posts.findById({ _id: post_id }).then(async (post) => {
-                            await DisLikes.find({ user_id: user._id, post_id:post._id }).then(async dislike => {
+                            await DisLikes.find({ user_id: user._id, post_id: post._id }).then(async dislike => {
                                 if (dislike[0] !== undefined) {
-                                    await DisLikes.deleteMany({ user_id: user._id, post_id:post._id })
+                                    await DisLikes.deleteMany({ user_id: user._id, post_id: post._id })
                                         .then(async disliked => {
                                             if (disliked !== null) {
                                                 res.send({
@@ -629,6 +629,15 @@ router.get('/post', async (req, res) => {
         })
 })
 
+router.get('/post/:_id', async (req, res) => {
+    const { _id } = req.params
+
+    Posts.find({ user_id: _id })
+        .then((post) => {
+            res.send({ post })
+        })
+})
+
 router.post('/comments', async (req, res) => {
     const {
         post_id
@@ -677,7 +686,8 @@ router.get('/logged', async (req, res) => {
                         exp: decodeToken.exp,
                         author: user.author,
                         avatar: user.avatar,
-                        status: user.status
+                        status: user.status,
+                        _id: user._id
                     })
                 }).catch((error) => {
                     res.send({

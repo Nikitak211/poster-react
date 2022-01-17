@@ -6,13 +6,11 @@ import './HomePage.css'
 import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
-import ProfileSettings from './components/ProfileSettings/ProfileSettings';
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
-    const [visibleProfileSettings, setVisibleProfileSettings] = useState(false)
     const [search, setSearch] = useState('')
     const [filteredPosts, setFilteredPosts] = useState([])
     const [deletePosts, setDeletePosts] = useState()
@@ -27,29 +25,33 @@ const HomePage = () => {
             } else { return null }
         }
     )
+
+    const logout = async () => {
+        const response = await axios.post('/api/auth/logout')
+        const json = await response.data
+
+        if (json.success) {
+            window.location.reload()
+            alert(json.message)
+        }
+        if (json.error) alert(json.message)
+    }
+
     const loadProfile = async () => {
         const response = await axios('/api/auth/logged')
         const Data = await response.data
-
         const exp = new Date(Data.exp * 1000)
         const time = new Date()
         const outdated = Data.outdated
 
         if (time === exp || outdated) {
-            async function logout() {
-                const response = await axios.post('/api/auth/logout')
-                const json = await response.data
-
-                if (json.success) {
-                    window.location.reload()
-                    alert(json.message)
-                }
-                if (json.error) alert(json.message)
-            }
             logout()
         }
-        setProfile(Data.avatar);
-        setProfileName(Data.author)
+        if (Data !== undefined) {
+            setProfile(Data.avatar);
+            setProfileName(Data.author)
+        } else { return }
+
     }
     const filterPosts = () => {
 
@@ -76,13 +78,11 @@ const HomePage = () => {
                 }
             })
         return () => { isSubscribed = false }
-    },[search,deletePosts,createPost,profile])
+    }, [search, deletePosts, createPost, profile])
     return (
         <div>
-
-            <Header setSearch={setSearch} profileSettings={setVisibleProfileSettings} profile={profile} profileName={profileName} />
+            <Header setSearch={setSearch} profile={profile} profileName={profileName} />
             <div>
-                <ProfileSettings visibleProfileSettings={visibleProfileSettings} />
             </div>
             <CreatePost setCreatePost={setCreatePost} avatar={profile} />
             <div className="posts">
@@ -90,7 +90,6 @@ const HomePage = () => {
                     <PostedPost setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
                 ))}
             </div>
-
         </div>
     );
 }

@@ -252,9 +252,15 @@ const PostedPost = (rootPosts) => {
       .then(data => {
         if (isSubscribed) {
           if (data !== undefined) {
-            setComment(data)
-            checkStatus()
+            if (click) {
+              setComment([])
+              setComment(data)
+            } else {
+              setComment([])
+              setComment(data.length)
+            }
           } else { return null }
+          checkStatus()
           getLikes()
           getDisLike()
         }
@@ -262,7 +268,7 @@ const PostedPost = (rootPosts) => {
     return () => {
       isSubscribed = false
     }
-  }, [success])
+  }, [success, posts._id])
 
   return (
     <article className="post" key={posts._id}>

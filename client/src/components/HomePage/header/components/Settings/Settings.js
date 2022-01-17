@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 
+import HomePage from './components/HomePage/HomePage'
 import Profile from './components/Profile/Profile'
 import LogoutButton from '../LogoutButton/LogoutButton';
 
+
 import './Settings.css'
 
-const Settings = (props) => {
+const Settings = () => {
 
     const [click, setClick] = useState(false)
     const [css, setCss] = useState("settings-open-container")
@@ -26,10 +28,13 @@ const Settings = (props) => {
     if (click) {
         return (
             <div className="settings-meta">
-                <div onClick={Clicked} className="settings-container"></div>
+                <div className="settings-container-box">
+                    <div onClick={Clicked} className="settings-container"></div>
+                </div>
                 <div className={css}>
                     <ul className="settings-ul">
-                        <Profile props={props} />
+                        <HomePage/>
+                        <Profile />
                         <LogoutButton />
                     </ul>
                 </div>
@@ -38,7 +43,9 @@ const Settings = (props) => {
     } else {
         return (
             <div className="settings-meta">
-                <div onClick={Clicked} className="settings-container"></div>
+                <div className="settings-container-box">
+                    <div onClick={Clicked} className="settings-container"></div>
+                </div>
                 <div className={css}>
                 </div>
             </div>

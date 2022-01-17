@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import Profile from './components/Profile/Profile'
 import Search from './components/search/Search'
 
 import './Header.css'
@@ -12,12 +11,12 @@ const Header = (props) => {
     },[])
     return (
         <header>
-            <Profile props={props} />
+            <h2 style={{marginLeft: 10}}>Poster</h2>
             <ul>
                 <Search props={props} />
                 
             </ul>
-            <Settings profileSettings={props.profileSettings}/>
+            <Settings/>
         </header>
     );
 }

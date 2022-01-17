@@ -12,10 +12,13 @@
     height: fit-content;
 }
 .create_post_arcticle{
+    position: relative;
     background-color:transparent;
     margin: 0 auto ;
     max-width:400px;
     min-width: 180px;
+    position: relative;
+    /* z-index: 0; */
 }
 .btn-c-post-container{
     align-items: end;

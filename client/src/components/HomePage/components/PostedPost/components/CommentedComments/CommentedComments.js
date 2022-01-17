@@ -69,13 +69,14 @@ const CommentedComments = ({ rootComment }) => {
         let isSubscribed = true;
 
         if (isSubscribed) {
-            getLikes()
-            getDisLike()
             if (rootComment.status) {
                 setStatus('comments online')
             } else {
                 setStatus('comments offline')
             }
+            getLikes()
+            getDisLike()
+            
         }
         return () => {
             isSubscribed = false
