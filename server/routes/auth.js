@@ -197,8 +197,6 @@ router.post('/deletePost', (req, res) => {
         post_id
     } = req.body;
 
-    console.log(post_id)
-
     const token = req.session.authorization;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
@@ -343,10 +341,9 @@ router.post('/likeComments', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Comments.findById({ _id: comment_id }).then(async (comment) => {
-
-                            await Like.find({ user_id: user._id }).then(async like => {
+                            await Like.find({ user_id: user._id, comment_id:comment._id }).then(async like => {
                                 if (like[0] !== undefined) {
-                                    await Like.deleteMany({ user_id: user._id })
+                                    await Like.deleteMany({user_id: user._id, comment_id:comment._id })
                                         .then(async liked => {
                                             if (liked !== null) {
                                                 res.send({
@@ -419,9 +416,9 @@ router.post('/dislikeComments', async (req, res) => {
                 } else {
                     await User.findOne({ _id: decodeToken._id }).then(async (user) => {
                         await Comments.findById({ _id: comment_id }).then(async (comment) => {
-                            await DisLikes.find({ user_id: user._id }).then(async dislike => {
+                            await DisLikes.find({ user_id: user._id, comment_id:comment._id }).then(async dislike => {
                                 if (dislike[0] !== undefined) {
-                                    await DisLikes.deleteMany({ user_id: user._id })
+                                    await DisLikes.deleteMany({ user_id: user._id, comment_id:comment._id })
                                         .then(async disliked => {
                                             if (disliked !== null) {
                                                 res.send({

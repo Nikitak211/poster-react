@@ -14,8 +14,8 @@
     height: 2em;
 }
 .profile-picture-comments{
-    width: 2em;
-    height: 2em;
+    max-width: 100%;
+    height: auto;
     border: 1px solid #84DCC6;
     border-radius:50%;
 }
@@ -30,6 +30,13 @@
 .comment-button{
     border-radius: 5px;
     color:#222222;
+    background: #95A3B3;
+}
+.comment-button:hover{
+    background-color: #f2f2f2;
+}
+.input-area:focus-within{
+    background-color: #f2f2f2;
 }
 .comment-area::-webkit-scrollbar {
     width: 0;

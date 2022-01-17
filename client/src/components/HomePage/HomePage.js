@@ -13,7 +13,9 @@ const HomePage = () => {
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
     const [visibleProfileSettings,setVisibleProfileSettings] = useState(false)
-
+    const [search, setSearch] = useState('')
+    const [filteredPosts, setFilteredPosts] = useState([])
+    
     const rootPosts = posts.filter(
         (post) => {
             if (posts.length !== 0) {
@@ -37,7 +39,6 @@ const HomePage = () => {
                 const json = await response.data
 
                 if (json.success) {
-                    console.log('up')
                     window.location.reload()
                     alert(json.message)
                 }
@@ -48,6 +49,13 @@ const HomePage = () => {
         setProfile(Data.avatar);
         setProfileName(Data.author)
     }
+    function filterPosts() {
+        const searchFilter = (post) => [post.content, post.author]
+          .join('')
+          .toLowerCase()
+          .indexOf(search.toLowerCase()) !== -1;
+          setFilteredPosts(rootPosts.filter(searchFilter))
+      }
 
     useEffect(() => {
         loadProfile()
@@ -56,17 +64,20 @@ const HomePage = () => {
             .then(Data => {
                 if (Data !== undefined) {
                     setPosts(Data)
+                    filterPosts()
                 }
             })
-    }, [])
-
+    }, [search,profile])
     return (
         <div>
-            <Header profileSettings={setVisibleProfileSettings} profile={profile} profileName={profileName} />
-            <CreatePost avatar={profile} />
+            
+            <Header setSearch={setSearch} profileSettings={setVisibleProfileSettings} profile={profile} profileName={profileName} />
+            <div>
             <ProfileSettings visibleProfileSettings={visibleProfileSettings} />
+            </div>
+            <CreatePost avatar={profile} />
             <div className="posts">
-                {rootPosts.map(rootPost => (
+                {filteredPosts.map(rootPost => (
                     <PostedPost avatar={profile} key={rootPost._id} posts={rootPost} />
                 ))}
             </div>

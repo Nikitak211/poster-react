@@ -1,12 +1,18 @@
+.settings-meta{
+    position: relative;
+    margin:auto;
+}
 .settings-open-container{
     position: relative;
     width: 7em;
-    height: 14em;
+    height:0;
     margin: auto;
     background: #4B4E6D;
-    bottom: 0.1em;
+    bottom: 0.5em;
     border: 1px solid transparent;
     border-radius:0 0 0 5px;
+    overflow: hidden;
+
 }
 .settings-ul{
     display: grid;
@@ -15,11 +21,11 @@
     height: fit-content;
 
 }
-.settings-open-container .settings-container{
+.settings-container{
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    left: 0;
+    left: 25%;
     right: 0;
     width: 2em;
     height: 2em;
@@ -27,18 +33,23 @@
     background-repeat: no-repeat;
     background-size: cover;
     cursor: pointer;
+    z-index: 2;
 }
-.settings-container{
-    position: relative;
-    display: flex;
-    width: 2em;
-    height: 2em;
-    background-image: url('../../../../../svgs/settings.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    z-index: 3;
-    cursor: pointer;
+.settings-open-container.show {
+    visibility: visible;
+    height: 14em;
+    transition-property: height;
+    transition-duration: 1s;
+    transition-timing-function: horizontal;
 }
+.settings-open-container.hide {
+    height: 0;
+    transition-property: height;
+    transition-duration: 1s;
+    transition-timing-function: cubic-bezier(1,0.5,0.2,5,0);
+    /* visibility: hidden; */
+}
+
 .setting-profile{
     width: 100%;
     height: 2em;

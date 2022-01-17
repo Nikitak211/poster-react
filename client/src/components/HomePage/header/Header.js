@@ -14,7 +14,7 @@ const Header = (props) => {
         <header>
             <Profile props={props} />
             <ul>
-                <Search props={props.props} />
+                <Search props={props} />
                 
             </ul>
             <Settings profileSettings={props.profileSettings}/>

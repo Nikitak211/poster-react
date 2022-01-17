@@ -74,15 +74,19 @@ const CommentedComments = ({ rootComments }) => {
                 })
     }
 
-    useEffect(() => {
-        getLikes()
-        getDisLike()
+    const checkStatus = () => {
         if (rootComments.status) {
             setStatus('comments-online')
         } else {
             setStatus('comments-offline')
         }
-    }, [Like, getLikes, disLike, getDisLike])
+    }
+
+    useEffect(() => {
+            getLikes()
+            getDisLike()
+            checkStatus()
+    }, [getLikes, getDisLike])
     return (
         <div key={rootComments._id} className="commented-containers">
             <ul className="commented-ul">

@@ -17,6 +17,16 @@
     max-width:400px;
     min-width: 180px;
 }
+.btn-c-post-container{
+    align-items: end;
+    justify-content: flex-end;
+}
+.profile-picture-post{
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #84DCC6;
+    border-radius:50%;
+}
 .btn_post-c{
     margin:0 auto;
     display:flex;
@@ -28,10 +38,11 @@
     border-radius:var(--radius--sm);
     
 }
-
+.btn_post-c:hover{
+    background-color: #f2f2f2;
+}
 .post___body-text{
     background-color: transparent;
-    border-bottom:0.5px dashed hsl(var(--accent2) /50%);
     line-height: 1.4;
     overflow: hidden;
     -webkit-line-clamp: 4;
@@ -58,5 +69,6 @@
     align-items: center;
     gap: 0.5em;
     width: 20em ;
+    border-bottom:0.5px dashed hsl(var(--accent2) /50%);
 }
 

@@ -44,7 +44,7 @@ const CommentInput = (props) => {
                 createPost(data.comment)
             })}>
             <div className="comment-container">
-            <img src={props.avatar} className="profile-picture-comments"></img>
+            <img className="profile-picture-comments" width="40"src={props.avatar} ></img>
                 <div className="input-area">
                 <textarea className="comment-area"
                     {...register("comment", {

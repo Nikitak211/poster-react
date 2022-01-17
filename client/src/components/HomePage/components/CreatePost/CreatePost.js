@@ -33,14 +33,16 @@ const CreatePost = (props) => {
             <div className="container-1">
                 <div className="formFillArea">
                     <div className="textare-inline-2c">
-                    <img src={props.avatar} className="profile-picture-comments"></img>
+                    <img width="40" src={props.avatar} className="profile-picture-post"></img>
                     <textarea placeholder="write your post here..." className="post___body-text"
                         {...register("content", {
                             required: "content is required",
                         }
                         )}></textarea>
                     </div>
-                    <button className="btn_post-c">post</button>
+                    <div className="btn-c-post-container">
+                        <button className="btn_post-c">post</button>
+                    </div> 
                 </div>
             </div>
         </form>
