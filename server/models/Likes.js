@@ -10,6 +10,10 @@ const Like = new Schema([{
     comment_id: {
         type: Schema.Types.ObjectId,
         ref: 'Comments'
+    },
+    post_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Posts'
     }
 }]);
 

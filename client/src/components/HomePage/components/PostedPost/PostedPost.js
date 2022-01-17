@@ -178,7 +178,7 @@ const PostedPost = (rootPosts) => {
   }
 
   const Like = async () => {
-    await axios.post('/api/auth/likeComments', { comment_id: rootComments._id })
+    await axios.post('/api/auth/likePost', { post_id: posts._id })
       .then(response => response.data)
       .then(data => {
         if (data.message === "liked comment") {
@@ -193,7 +193,7 @@ const PostedPost = (rootPosts) => {
       })
   }
   const getLikes = async () => {
-    await axios.get(`/api/auth/likeComments/${rootComments._id}`)
+    await axios.get(`/api/auth/likePost/${posts._id}`)
       .then(response => response.data)
       .then(data => {
         let ammountOfLikes = data.like.length
@@ -207,7 +207,7 @@ const PostedPost = (rootPosts) => {
   }
 
   const disLike = async () => {
-    await axios.post('/api/auth/dislikeComments', { comment_id: rootComments._id })
+    await axios.post('/api/auth/dislikePost', { post_id: posts._id })
       .then(response => response.data)
       .then(data => {
         if (data.message === "disliked comment") {
@@ -223,7 +223,7 @@ const PostedPost = (rootPosts) => {
   }
 
   const getDisLike = async () => {
-    await axios.get(`/api/auth/dislikeComments/${rootComments._id}`)
+    await axios.get(`/api/auth/dislikePost/${posts._id}`)
       .then(response => response.data)
       .then(data => {
         let ammountOfDisLikes = data.dislike.length
@@ -237,6 +237,8 @@ const PostedPost = (rootPosts) => {
 
   useEffect(() => {
     checkStatus()
+    getDisLike()
+    getLikes()
     axios.post('/api/auth/comments', { post_id: posts._id })
       .then(response => response.data.comment)
       .then(data => {
