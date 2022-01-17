@@ -28,15 +28,9 @@ const PostedPost = (rootPosts) => {
         let t1 = new Date()
         let ct = comments.date
         return new Date(ct) < t1
-      }
+      } else { return null }
     }
   )
-
-  if (success) {
-    window.location.reload()
-  } else {
-
-  }
 
   const click = () => {
     if (clicked) {
@@ -51,7 +45,7 @@ const PostedPost = (rootPosts) => {
       .then(response => response.data)
       .then(data => {
         if (data.success) {
-          window.location.reload()
+          rootPosts.setDeletePosts(true)
         }
         if (data.error) {
           return null
@@ -64,25 +58,23 @@ const PostedPost = (rootPosts) => {
   const Grow = () => {
     return (
       <div className="post-like-container">
-        <a className="post__body a" onClick={Show} >continue reading...</a>
+        <button className="post__body a" onClick={Show} >continue reading...</button>
         <ul className="posted-ul">
           <li onClick={Like} className="posted-li">👍 {0 | likes}</li>
           <li onClick={disLike} className="posted-li">👎 {0 | dislikes}</li>
         </ul>
       </div>
-
     )
   }
   const Minimize = () => {
     return (
       <div className="post-like-container" >
-        <a className="post__body a" onClick={Show} >minimize...</a>
+        <button className="post__body a" onClick={Show} >minimize...</button>
         <ul className="posted-ul">
           <li onClick={Like} className="posted-li">👍 {0 | likes}</li>
           <li onClick={disLike} className="posted-li">👎 {0 | dislikes}</li>
         </ul>
       </div>
-
     )
   }
 
@@ -105,30 +97,35 @@ const PostedPost = (rootPosts) => {
       setStatus('post__author--avatar offline')
     }
   }
-
-  const ShowComments = () => {
-    if (rootComments.length !== 0) {
+  // create a class that hides all comments - instead of this function!!! it creates memory leak...
+  const ShowComments = (props) => {
+    props = props.props
+    if (props.length !== 0) {
       if (clicked) {
         return (
           <div className="post__comments-container">
-            {rootComments.map(rootComment => (
-              <CommentedComments key={rootComment._id} rootComments={rootComment} />
+            {props.map(rootComment => (
+              <CommentedComments key={rootComment._id} rootComment={rootComment} />
             ))}
-            <button onClick={click} className='show-comments'>-</button>
+            <div className="show-comments-container-align" >
+              <button onClick={click} className='show-comments'>-</button>
+            </div>
           </div>
         )
       } else {
+
         return (
           <div className="show-comments-container">
-            <small className='show-comments-count'>{rootComments.length + 'Comments'}</small>
-            <button onClick={click} className='show-comments'>+</button>
+            <small className='show-comments-count'>{props.length + 'Comments'}</small>
+            <div className="show-comments-container-align" >
+              <button onClick={click} className='show-comments'>+</button>
+            </div>
           </div>
         )
       }
     } else {
       return (
-        <div className="show-comments-container">
-        </div>
+        <div className="show-comments-container"></div>
       )
     }
   }
@@ -193,17 +190,23 @@ const PostedPost = (rootPosts) => {
       })
   }
   const getLikes = async () => {
+    let isSubscribed = true;
     await axios.get(`/api/auth/likePost/${posts._id}`)
       .then(response => response.data)
       .then(data => {
-        let ammountOfLikes = data.like.length
-        if (ammountOfLikes == undefined) {
-          setLikes(0)
-        } else {
-          setLikes(ammountOfLikes)
+        if (isSubscribed) {
+          let ammountOfLikes = data.like.length
+          if (ammountOfLikes === undefined) {
+            setLikes(0)
+          } else {
+            setLikes(ammountOfLikes)
+          }
         }
 
       })
+    return () => {
+      isSubscribed = false
+    }
   }
 
   const disLike = async () => {
@@ -223,29 +226,42 @@ const PostedPost = (rootPosts) => {
   }
 
   const getDisLike = async () => {
+    let isSubscribed = true;
     await axios.get(`/api/auth/dislikePost/${posts._id}`)
       .then(response => response.data)
       .then(data => {
-        let ammountOfDisLikes = data.dislike.length
-        if (ammountOfDisLikes == undefined) {
-          setDisLikes(0)
-        } else {
-          setDisLikes(ammountOfDisLikes)
+        if (isSubscribed) {
+          let ammountOfDisLikes = data.dislike.length
+          if (ammountOfDisLikes === undefined) {
+            setDisLikes(0)
+          } else {
+            setDisLikes(ammountOfDisLikes)
+          }
         }
       })
+    return () => {
+      isSubscribed = false
+    }
   }
 
   useEffect(() => {
-    checkStatus()
-    getDisLike()
-    getLikes()
+    let isSubscribed = true;
+
     axios.post('/api/auth/comments', { post_id: posts._id })
       .then(response => response.data.comment)
       .then(data => {
-        if (data !== undefined) {
-          setComment(data)
+        if (isSubscribed) {
+          if (data !== undefined) {
+            setComment(data)
+            checkStatus()
+          } else { return null }
+          getLikes()
+          getDisLike()
         }
       })
+    return () => {
+      isSubscribed = false
+    }
   }, [success])
 
   return (
@@ -272,7 +288,7 @@ const PostedPost = (rootPosts) => {
           <p onClick={deletePosts} className="post__delete"></p>
         </div>
         <div >
-          <ShowComments />
+          <ShowComments props={rootComments} />
         </div>
       </div>
     </article>

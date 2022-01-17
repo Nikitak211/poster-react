@@ -143,7 +143,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    
+    cursor: pointer;
     width: 3em;
     font-size: 1em;
 }
@@ -186,8 +186,8 @@
 .show-comments{
     background-color:transparent;
     color:black;
-    margin: auto;
-    display: flex ;
+    margin: 0 auto;
+    display: flex;
     justify-content:center;
     align-items:center;
     width: 16px;
@@ -197,6 +197,10 @@
     border-radius: 50%;
     cursor: pointer;
 }
+/* .show-comments-container-align{
+    width: 100%;
+    margin-bottom: 1em;
+} */
 .show-comments-count{
     background-color:transparent;
     color:black;
@@ -204,8 +208,8 @@
     display: flex ;
     font-size: 12px;
     font-weight: bold;
-    justify-content:start;
-    align-items:start;
+    justify-content:flex-start;
+    align-items:flex-start;
 }
 @media only screen and (max-width: 800px) {
     .post{

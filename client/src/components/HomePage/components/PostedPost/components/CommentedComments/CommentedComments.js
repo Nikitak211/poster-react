@@ -5,9 +5,9 @@ import axios from 'axios';
 
 import './CommentedComments.css'
 
-const CommentedComments = ({ rootComments }) => {
-    
-    const [status, setStatus] = useState('offline')
+const CommentedComments = ({ rootComment }) => {
+
+    const [status, setStatus] = useState('comments')
     const [likes, setLikes] = useState()
     const [dislikes, setDisLikes] = useState()
 
@@ -16,45 +16,33 @@ const CommentedComments = ({ rootComments }) => {
     }
 
     const Like = async () => {
-        await axios.post('/api/auth/likeComments', { comment_id: rootComments._id })
+        await axios.post('/api/auth/likeComments', { comment_id: rootComment._id })
             .then(response => response.data)
-                .then(data => {
-                    if (data.message === "liked comment") {
-                        getLikes()
-                    }
-                    if (data.message === "removed like") {
-                        getLikes()
-                    }
-                    if (data.error) {
-                        alert(data.message)
-                    }
-                })
+            .then(data => {
+                if (data.error) {
+                    alert(data.message)
+                }
+            })
     }
 
     const getLikes = async () => {
-        await axios.get(`/api/auth/likeComments/${rootComments._id}`)
+        await axios.get(`/api/auth/likeComments/${rootComment._id}`)
             .then(response => response.data)
-                .then(data => {
-                    let ammountOfLikes = data.like.length
-                    if (ammountOfLikes == undefined) {
-                        setLikes(0)
-                    } else {
-                        setLikes(ammountOfLikes)
-                    }
-
-                })
+            .then(data => {
+                let ammountOfLikes = data.like.length
+                getLikes()
+                if (ammountOfLikes !== undefined) {
+                    setLikes(ammountOfLikes)
+                } else {
+                    setLikes(0)
+                }
+            })
     }
 
     const disLike = async () => {
-        await axios.post('/api/auth/dislikeComments', { comment_id: rootComments._id })
+        await axios.post('/api/auth/dislikeComments', { comment_id: rootComment._id })
             .then(response => response.data)
             .then(data => {
-                if (data.message === "disliked comment") {
-                    getDisLike()
-                }
-                if (data.message === "removed dislike") {
-                    getDisLike()
-                }
                 if (data.error) {
                     alert(data.message)
                 }
@@ -62,41 +50,48 @@ const CommentedComments = ({ rootComments }) => {
     }
 
     const getDisLike = async () => {
-        await axios.get(`/api/auth/dislikeComments/${rootComments._id}`)
+        await axios.get(`/api/auth/dislikeComments/${rootComment._id}`)
             .then(response => response.data)
-                .then(data => {
-                    let ammountOfDisLikes = data.dislike.length
-                    if (ammountOfDisLikes == undefined) {
-                        setDisLikes(0)
-                    } else {
-                        setDisLikes(ammountOfDisLikes)
-                    }
-                })
-    }
+            .then(data => {
+                let ammountOfDisLikes = data.dislike.length
+                getDisLike()
+                if (ammountOfDisLikes !== undefined) {
+                    setDisLikes(ammountOfDisLikes)
+                } else {
+                    setDisLikes(0)
+                }
 
-    const checkStatus = () => {
-        if (rootComments.status) {
-            setStatus('comments-online')
-        } else {
-            setStatus('comments-offline')
-        }
+            })
+
     }
 
     useEffect(() => {
+        let isSubscribed = true;
+
+        if (isSubscribed) {
             getLikes()
             getDisLike()
-            checkStatus()
-    }, [getLikes, getDisLike])
+            if (rootComment.status) {
+                setStatus('comments online')
+            } else {
+                setStatus('comments offline')
+            }
+        }
+        return () => {
+            isSubscribed = false
+            }
+    }, [rootComment, Like, disLike])
     return (
-        <div key={rootComments._id} className="commented-containers">
+        <div key={rootComment._id} className="commented-containers">
             <ul className="commented-ul">
-                <img className="img-comment" width="10%" height="10%" src={rootComments.avatar}></img>
-                <div className={status}></div>
+                <div className={status}>
+                    <img width={32.5} alt={rootComment.author} src={rootComment.avatar}></img>
+                </div>
                 <li onClick={Like} className="commented-li">👍 {0 | likes}</li>
                 <li onClick={disLike} className="commented-li">👎 {0 | dislikes}</li>
             </ul>
-            <textarea className="commented-text" defaultValue={rootComments.content} ></textarea>
-            <small>{returnPostDate(new Date(rootComments.date))}</small>
+            <textarea className="commented-text" defaultValue={rootComment.content} disabled ></textarea>
+            <small>{returnPostDate(new Date(rootComment.date))}</small>
         </div>
     )
 }

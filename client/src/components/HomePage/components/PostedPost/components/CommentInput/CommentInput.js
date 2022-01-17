@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
@@ -9,9 +9,7 @@ const CommentInput = (props) => {
 
     const {
         register,
-        handleSubmit,
-        formState: { errors },
-        watch
+        handleSubmit
     } = useForm();
 
     const createPost = async (comment) => {
@@ -25,7 +23,7 @@ const CommentInput = (props) => {
         await api.post('/api/auth/postcomment', newComment)
             .then(response => {
                 let data = response.data
-                if(data.success){
+                if (data.success) {
                     props.setSuccess(data.success)
                 }
                 if (data.error) return
@@ -33,24 +31,28 @@ const CommentInput = (props) => {
             .catch(err => {
             })
     }
-    
+
     useEffect(() => {
-
-    },[createPost,handleSubmit])
-
+        let s = true;
+        if (s) {
+        props.setSuccess(false)
+        }
+        return () => {s = false}
+    }, [createPost, handleSubmit,props])
+    
     return (
         <form
             onSubmit={handleSubmit((data) => {
                 createPost(data.comment)
             })}>
             <div className="comment-container">
-            <img className="profile-picture-comments" width="40"src={props.avatar} ></img>
+                <img alt={props.pending} className="profile-picture-comments" width="40" src={props.avatar} ></img>
                 <div className="input-area">
-                <textarea className="comment-area"
-                    {...register("comment", {
-                        required: "cannot be empty"
-                    }
-                    )}></textarea>
+                    <textarea className="comment-area"
+                        {...register("comment", {
+                            required: "cannot be empty"
+                        }
+                        )}></textarea>
                 </div>
                 <button className="comment-button">Comment</button>
             </div>
