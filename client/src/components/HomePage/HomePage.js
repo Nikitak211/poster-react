@@ -18,7 +18,7 @@ const HomePage = () => {
 
     const rootPosts = posts.filter(
         (post) => {
-            if (posts.length !== 0) {
+            if (post.length !== 0) {
                 let t1 = new Date()
                 let ct = post.date
                 return new Date(ct) < t1
@@ -59,7 +59,7 @@ const HomePage = () => {
             .join('')
             .toLowerCase()
             .indexOf(search.toLowerCase()) !== -1;
-        setFilteredPosts(rootPosts.filter(searchFilter))
+        setFilteredPosts(rootPosts.reverse().filter(searchFilter))
     }
 
     useEffect(() => {

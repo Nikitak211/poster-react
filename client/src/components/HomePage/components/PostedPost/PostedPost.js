@@ -254,7 +254,7 @@ const PostedPost = (rootPosts) => {
           if (data !== undefined) {
             if (click) {
               setComment([])
-              setComment(data)
+              setComment(data.reverse())
             } else {
               setComment([])
               setComment(data.length)

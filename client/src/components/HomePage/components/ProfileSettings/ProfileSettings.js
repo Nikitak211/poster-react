@@ -56,7 +56,7 @@ const ProfileSettings = () => {
                 .then(response => response.data.post)
                 .then(Data => {
                     if (isSubscribed) {
-                        setPosts(Data)
+                        setPosts(Data.reverse())
                         setDeletePosts()
                         setCreatePost()
                     }
