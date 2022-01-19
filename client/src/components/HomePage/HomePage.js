@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import ScrollToBottom from 'react-scroll-to-bottom'
 
 import './HomePage.css'
 
 import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
+import ChatFunc from '../Chats/ChatFunc';
+import { set } from 'lodash';
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
@@ -15,6 +18,8 @@ const HomePage = () => {
     const [filteredPosts, setFilteredPosts] = useState([])
     const [deletePosts, setDeletePosts] = useState()
     const [createPost, setCreatePost] = useState()
+    const [user_id, setUserId] = useState()
+    const [pending , setPending] = useState([])
 
     const rootPosts = posts.filter(
         (post) => {
@@ -48,8 +53,12 @@ const HomePage = () => {
             logout()
         }
         if (Data !== undefined) {
+            setUserId(Data._id)
             setProfile(Data.avatar);
             setProfileName(Data.author)
+            if(Data.pending !== undefined){
+                setPending(Data.pending)
+            }
         } else { return }
 
     }
@@ -81,15 +90,19 @@ const HomePage = () => {
     }, [search, deletePosts, createPost, profile])
     return (
         <div>
-            <Header setSearch={setSearch} profile={profile} profileName={profileName} />
+            <Header user_id={user_id} pending={pending} setSearch={setSearch} profile={profile} profileName={profileName} />
             <div>
             </div>
             <CreatePost setCreatePost={setCreatePost} avatar={profile} />
+            
             <div className="posts">
-                {filteredPosts.map(rootPost => (
-                    <PostedPost setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
-                ))}
+               
+                    {filteredPosts.map(rootPost => (
+                        <PostedPost user_id={user_id} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
+                    ))}
+            
             </div>
+            <ChatFunc profileName={profileName} />
         </div>
     );
 }

@@ -10,6 +10,7 @@ const Posts = require('../models/Posts')
 const Comments = require('../models/Comments')
 const Like = require('../models/Likes')
 const DisLikes = require('../models/DisLikes');
+const Password = require('../models/Password');
 
 router.use(express.json())
 
@@ -23,7 +24,15 @@ router.post('/register', async (req, res) => {
         } = req.body;
 
         let user = await User.findOne({ email })
+        let passwords = await Password.findOne({ email })
+
         if (user) {
+            return res.send({
+                error: true,
+                message: "email allready exsisting"
+            })
+        }
+        if (passwords) {
             return res.send({
                 error: true,
                 message: "email allready exsisting"
@@ -36,13 +45,18 @@ router.post('/register', async (req, res) => {
 
         user = new User({
             author,
-            password: hashedPass,
             email,
             date,
             avatar: randomAvatar
         })
 
+        passwords = new Password({
+            user_id: user.id,
+            email,
+            password: hashedPass
+        })
         await user.save()
+        await passwords.save()
         res.send({
             success: true,
             message: "user has created"
@@ -65,55 +79,59 @@ router.post('/login', async (req, res) => {
 
         await User.findOne({ email })
             .then(async user => {
-                if (user) {
-                    bcrypt.compare(password, user.password, function (err, result) {
-                        if (err) {
-                            res.send({
-                                error: true,
-                                message: 'somthing went wrong'
+                await Password.findOne({ user_id: user.id, email })
+                    .then(async passwords => {
+                        if (user) {
+                            bcrypt.compare(password, passwords.password, function (err, result) {
+                                if (err) {
+                                    res.send({
+                                        error: true,
+                                        message: 'somthing went wrong'
+                                    })
+                                }
+                                if (result) {
+                                    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+                                    req.session.authorization = token
+                                    return res.send({
+                                        success: true,
+                                        isAuth: 'Login successfully',
+                                        token
+                                    })
+                                } else {
+                                    return res.send({
+                                        error: true,
+                                        message: 'email or password is incorrect'
+                                    });
+                                }
                             })
-                        }
-                        if (result) {
-                            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
-                            req.session.authorization = token
-                            return res.send({
-                                success: true,
-                                isAuth: 'Login successfully',
-                                token
-                            })
-                        } else {
-                            return res.send({
-                                error: true,
-                                message: 'email or password is incorrect'
-                            });
-                        }
-                    })
-                    await Posts.find({ user_id: user._id })
-                        .then(async (post) => {
-                            if (post !== null) {
-                                post.map(posts => {
-                                    posts.status = true
-                                    posts.save()
-                                })
-                            } else { return null }
-                            await Comments.find({ user_id: user._id })
-                                .then((comment) => {
-                                    if (comment !== null) {
-                                        comment.map(comments => {
-                                            comments.status = true
-                                            comments.save()
+                            await Posts.find({ user_id: user._id })
+                                .then(async (post) => {
+                                    if (post !== null) {
+                                        post.map(posts => {
+                                            posts.status = true
+                                            posts.save()
                                         })
                                     } else { return null }
+                                    await Comments.find({ user_id: user._id })
+                                        .then((comment) => {
+                                            if (comment !== null) {
+                                                comment.map(comments => {
+                                                    comments.status = true
+                                                    comments.save()
+                                                })
+                                            } else { return null }
+                                        })
                                 })
-                        })
-                    user.status = true;
-                    user.save()
-                } else {
-                    res.send({
-                        error: true,
-                        message: "email or password is incorrect"
+                            user.status = true;
+                            user.save()
+                        } else {
+                            res.send({
+                                error: true,
+                                message: "email or password is incorrect"
+                            })
+                        }
                     })
-                }
+
             }).catch((error) => {
                 console.error(error)
             })
@@ -275,6 +293,103 @@ router.post('/post', async (req, res) => {
         })
     }
 })
+
+router.post('/friendreq', async (req, res) => {
+    const { uid, puid } = req.body
+    await User.findByIdAndUpdate({ _id: uid })
+        .then(async user => {
+                await User.findByIdAndUpdate({ _id: puid })
+                    .then(puser => {
+                        if (uid !== puid) {
+                            console.log(puser._id, user._id)
+                            if (user.request[0] !== undefined && user.request !== undefined) {
+                                user.request.map(userrequest => {
+                                    if (userrequest === puser._id + user._id) {
+                                        res.send({
+                                            message: "request allready sent"
+                                        })
+                                    }
+                                })
+                            } else {
+                                user.request.push((puser._id + user._id))
+                                user.save()
+                                res.send({
+                                    message: "friend request sent"
+                                })
+                            }
+
+                            if (puser.pending[0] !== undefined && puser.pending !== undefined) {
+                                puser.pending.map(puserpending => {
+                                    if (puserpending === puser._id + user._id) {
+                                        return null
+                                    }
+                                })
+                            } else {
+                                puser.pending.push((puser._id + user._id))
+                                puser.save()
+                            }
+                        } else {
+                            res.send({
+                                success: false,
+                                message: 'cannot add your self as a friend.'
+                            })
+                        }
+                    })
+             
+        })
+})
+
+router.post('/acceptRequest', async (req, res) => {
+    const { uid, puid } = req.body
+    console.log(uid, puid)
+    await User.findByIdAndUpdate(uid)
+        .then(async user => {
+            await User.findByIdAndUpdate(puid)
+                .then(async user2 => {
+                    console.log('im here')
+                    user.request.map(main => {
+                        console.log(main)
+                        user2.pending.map(target => {
+                            console.log(target)
+                            if (main === target) {
+                                console.log('its matching')
+                                user.friends.push(target)
+                                user2.friends.push(target)
+                                let x = user.request.indexOf(target)
+                                let y = user2.pending.indexOf(target)
+                                user.request.splice(x, 1)
+                                user2.pending.splice(y, 1)
+                                user.save()
+                                user2.save()
+                            }
+                        })
+                    })
+                })
+        })
+
+})
+
+
+router.post('/friendcheck', async (req, res) => {
+    const { uid, puid } = req.body
+
+    await User.findById(uid)
+        .then(async main => {
+            await User.findById(puid)
+                .then(target => {
+                    if (main._id !== target._id) {
+                        if(main.friends.includes(target.friends)){
+                            res.send({
+                                friends: true
+                            })
+                        }
+
+                    }
+                })
+        })
+})
+
+
 router.post('/postcomment', async (req, res) => {
     try {
         const {
@@ -687,7 +802,8 @@ router.get('/logged', async (req, res) => {
                         author: user.author,
                         avatar: user.avatar,
                         status: user.status,
-                        _id: user._id
+                        _id: user._id,
+                        pending: user.pending
                     })
                 }).catch((error) => {
                     res.send({

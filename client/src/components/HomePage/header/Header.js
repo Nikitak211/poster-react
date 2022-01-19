@@ -4,7 +4,7 @@ import Search from './components/search/Search'
 
 import './Header.css'
 import Settings from './components/Settings/Settings';
-
+import Notification from './components/Notification/Notification'
 const Header = (props) => {
     useEffect(() => {
 
@@ -12,6 +12,8 @@ const Header = (props) => {
     return (
         <header>
             <h2 style={{marginLeft: 10}}>Poster</h2>
+            <Notification props={props}/>
+            
             <ul>
                 <Search props={props} />
                 

@@ -13,14 +13,12 @@
     border: 1px solid transparent;
     border-radius:0 0 0 5px;
     overflow: hidden;
-
 }
 .settings-ul{
     display: grid;
     gap: 0.5em;
     width: 100%;
     height: fit-content;
-
 }
 .settings-container-box{
     position: relative;
@@ -48,14 +46,14 @@
     visibility: visible;
     height: 14em;
     transition-property: height;
-    transition-duration: 1s;
-    transition-timing-function: horizontal;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
 }
 .settings-open-container.hide {
     height: 0;
     transition-property: height;
-    transition-duration: 1s;
-    transition-timing-function: cubic-bezier(1,0.5,0.2,5,0);
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
     /* visibility: hidden; */
 }
 

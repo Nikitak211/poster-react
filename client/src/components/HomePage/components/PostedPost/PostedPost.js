@@ -9,8 +9,9 @@ import './PostedPost.css'
 let row;
 
 const PostedPost = (rootPosts) => {
-
   let posts = rootPosts.posts
+  let uid = rootPosts.user_id
+  let puid = rootPosts.posts.user_id
 
   const [success, setSuccess] = useState()
   const [comment, setComment] = useState([])
@@ -19,7 +20,7 @@ const PostedPost = (rootPosts) => {
   const [showRows, setshowRows] = useState(false)
   const [likes, setLikes] = useState()
   const [dislikes, setDisLikes] = useState()
-
+  const [friends, setFriends] = useState(false)
   const ref = useRef()
 
   const rootComments = comment.filter(
@@ -66,6 +67,7 @@ const PostedPost = (rootPosts) => {
       </div>
     )
   }
+
   const Minimize = () => {
     return (
       <div className="post-like-container" >
@@ -98,37 +100,7 @@ const PostedPost = (rootPosts) => {
     }
   }
   // create a class that hides all comments - instead of this function!!! it creates memory leak...
-  const ShowComments = (props) => {
-    props = props.props
-    if (props.length !== 0) {
-      if (clicked) {
-        return (
-          <div className="post__comments-container">
-            {props.map(rootComment => (
-              <CommentedComments key={rootComment._id} rootComment={rootComment} />
-            ))}
-            <div className="show-comments-container-align" >
-              <button onClick={click} className='show-comments'>-</button>
-            </div>
-          </div>
-        )
-      } else {
 
-        return (
-          <div className="show-comments-container">
-            <small className='show-comments-count'>{props.length + 'Comments'}</small>
-            <div className="show-comments-container-align" >
-              <button onClick={click} className='show-comments'>+</button>
-            </div>
-          </div>
-        )
-      }
-    } else {
-      return (
-        <div className="show-comments-container"></div>
-      )
-    }
-  }
 
   const RowsToShow = () => {
     if (showRows) {
@@ -244,6 +216,16 @@ const PostedPost = (rootPosts) => {
     }
   }
 
+  const addFriend = async () => {
+
+    await axios.post('/api/auth/friendreq',{uid, puid})
+      .then(response => response.data)
+        .then(data => {
+          console.log(data)
+        })
+
+  }
+
   useEffect(() => {
     let isSubscribed = true;
 
@@ -259,6 +241,12 @@ const PostedPost = (rootPosts) => {
               setComment([])
               setComment(data.length)
             }
+
+            axios.post('api/auth/friendcheck',{uid,puid})
+              .then(response => response.data)
+                .then(data => {
+                  setFriends(data.friends)
+                })
           } else { return null }
           checkStatus()
           getLikes()
@@ -268,7 +256,7 @@ const PostedPost = (rootPosts) => {
     return () => {
       isSubscribed = false
     }
-  }, [success, posts._id])
+  }, [success,posts._id])
 
   return (
     <article className="post" key={posts._id}>
@@ -279,7 +267,11 @@ const PostedPost = (rootPosts) => {
               <div className={status}>
                 <img width={55} src={posts.avatar} alt={posts.author}></img>
               </div>
-
+              { posts._id !== uid ? (
+              <div>
+              {!friends ? (<p style={{cursor: 'pointer'}} onClick={addFriend}>+</p>) : (<div></div>)}
+              </div>) : (<div></div>)
+              }
               <div>
                 <p className="post__author--name">{posts.author}</p>
                 <p className=" post__date">{returnPostDate(new Date(posts.date))}</p>
@@ -293,9 +285,32 @@ const PostedPost = (rootPosts) => {
           <CommentInput avatar={rootPosts.avatar} setSuccess={setSuccess} pending={posts._id} />
           <p onClick={deletePosts} className="post__delete"></p>
         </div>
-        <div >
-          <ShowComments props={rootComments} />
-        </div>
+        {rootComments.length !== 0 ?
+          <div >
+            {clicked ?
+              (
+                <div className="post__comments-container">
+                  {rootComments.map(rootComment => (
+                    <CommentedComments key={rootComment._id} rootComment={rootComment} />
+                  ))}
+                  <div className="show-comments-container-align" >
+                    <button onClick={click} className='show-comments'>-</button>
+                  </div>
+                </div>
+              ) :
+              (
+                <div className="show-comments-container">
+                  <small className='show-comments-count'>{rootComments.length + 'Comments'}</small>
+                  <div className="show-comments-container-align" >
+                    <button onClick={click} className='show-comments'>+</button>
+                  </div>
+                </div>
+              )
+            }
+          </div>
+          :
+          <div className="show-comments-container"></div>
+        }
       </div>
     </article>
   )
