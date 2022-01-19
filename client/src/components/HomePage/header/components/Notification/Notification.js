@@ -6,7 +6,7 @@ import './Notification.css';
 
 const Notification = ({ props }) => {
     const [clicked, setClicked] = useState(false)
-    const [css, setCss] = useState("notification-open-container")
+    const [css, setCss] = useState("notification-open-container hide")
 
     const click = () => {
         if (clicked) {
@@ -18,11 +18,11 @@ const Notification = ({ props }) => {
         }
     }
 
-    const acceptFriendRequest = async (uid) => {
+    const acceptFriendRequest = async (puid) => {
         if(props.user_id !== undefined) {
             await axios.post('/api/auth/acceptRequest',{
-                puid:props.user_id,
-                uid
+                uid:props.user_id,
+                puid
             })
         }
         
@@ -30,7 +30,7 @@ const Notification = ({ props }) => {
     
     useEffect(() => {
 
-    },[])
+    },[acceptFriendRequest])
 
     return (
         <>
@@ -43,8 +43,8 @@ const Notification = ({ props }) => {
                     <div className={css}>
                     <ul className="notification-ul">
                         {props.pending.map(pending => {
-                            pending = pending.split(props.user_id).join('')
-                            return <li key={props.user_id} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{pending}<p onClick={() => acceptFriendRequest(pending)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
+                            pending = pending.from
+                            return <li key={pending} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{pending}<p onClick={() => acceptFriendRequest(pending)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
                         })}
                     </ul>
                     </div>

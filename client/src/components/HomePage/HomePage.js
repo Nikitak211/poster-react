@@ -58,8 +58,11 @@ const HomePage = () => {
             setProfileName(Data.author)
             if(Data.pending !== undefined){
                 setPending(Data.pending)
-            }
-        } else { return }
+            } 
+        } else { 
+            
+            return 
+        }
 
     }
     const filterPosts = () => {
@@ -90,7 +93,7 @@ const HomePage = () => {
     }, [search, deletePosts, createPost, profile])
     return (
         <div>
-            <Header user_id={user_id} pending={pending} setSearch={setSearch} profile={profile} profileName={profileName} />
+            <Header user_id={user_id} pending={pending} setSearch={setSearch} />
             <div>
             </div>
             <CreatePost setCreatePost={setCreatePost} avatar={profile} />

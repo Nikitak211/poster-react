@@ -21,6 +21,8 @@ const PostedPost = (rootPosts) => {
   const [likes, setLikes] = useState()
   const [dislikes, setDisLikes] = useState()
   const [friends, setFriends] = useState(false)
+  const [owner, setOwner] = useState(false)
+
   const ref = useRef()
 
   const rootComments = comment.filter(
@@ -218,11 +220,11 @@ const PostedPost = (rootPosts) => {
 
   const addFriend = async () => {
 
-    await axios.post('/api/auth/friendreq',{uid, puid})
+    await axios.post('/api/auth/friendreq', { uid, puid })
       .then(response => response.data)
-        .then(data => {
-          console.log(data)
-        })
+      .then(data => {
+        console.log(data)
+      })
 
   }
 
@@ -242,11 +244,12 @@ const PostedPost = (rootPosts) => {
               setComment(data.length)
             }
 
-            axios.post('api/auth/friendcheck',{uid,puid})
+            axios.post('api/auth/friendcheck', { uid, puid })
               .then(response => response.data)
-                .then(data => {
-                  setFriends(data.friends)
-                })
+              .then(data => {
+                setOwner(data.owner)
+                setFriends(data.friends)
+              })
           } else { return null }
           checkStatus()
           getLikes()
@@ -256,7 +259,7 @@ const PostedPost = (rootPosts) => {
     return () => {
       isSubscribed = false
     }
-  }, [success,posts._id])
+  }, [success, posts._id])
 
   return (
     <article className="post" key={posts._id}>
@@ -267,11 +270,14 @@ const PostedPost = (rootPosts) => {
               <div className={status}>
                 <img width={55} src={posts.avatar} alt={posts.author}></img>
               </div>
-              { posts._id !== uid ? (
               <div>
-              {!friends ? (<p style={{cursor: 'pointer'}} onClick={addFriend}>+</p>) : (<div></div>)}
-              </div>) : (<div></div>)
-              }
+                {!friends & !owner ? (
+                  <div className="friend-request">
+                    <p style={{ cursor: 'pointer' }} onClick={addFriend}>+</p>
+                  </div>
+
+                ) : (<div></div>)}
+              </div>
               <div>
                 <p className="post__author--name">{posts.author}</p>
                 <p className=" post__date">{returnPostDate(new Date(posts.date))}</p>

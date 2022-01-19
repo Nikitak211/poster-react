@@ -17,7 +17,8 @@ const ProfileSettings = () => {
     const [search, setSearch] = useState()
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
-
+    const [user_id, setUserId] = useState()
+    const [pending , setPending] = useState([])
 
     const logout = async () => {
         const response = await axios.post('/api/auth/logout')
@@ -44,6 +45,9 @@ const ProfileSettings = () => {
             setVerify(Data._id)
             setProfile(Data.avatar);
             setProfileName(Data.author)
+            if(Data.pending !== undefined){
+                setPending(Data.pending)
+            } 
         } else { return }
 
     }
@@ -67,7 +71,7 @@ const ProfileSettings = () => {
 
     return (
         <div className="profile-settings-container">
-            <Header setSearch={setSearch} />
+            <Header user_id={verify} pending={pending} setSearch={setSearch} />
             <div className="container-header">
                 <div className="profile-main-avatar">
                     <img width={100} src={profile} alt={profileName}></img>
@@ -79,7 +83,7 @@ const ProfileSettings = () => {
                 <CreatePost setCreatePost={setCreatePost} avatar={profile} />
                 <div className="posts">
                     {posts.map(rootPost => (
-                        <PostedPost setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
+                        <PostedPost user_id={verify} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
                     ))}
                 </div>
             </div>
