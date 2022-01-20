@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import ScrollToBottom from 'react-scroll-to-bottom'
 
 import './HomePage.css'
 
@@ -8,7 +7,6 @@ import Header from './header/Header';
 import PostedPost from './components/PostedPost/PostedPost';
 import CreatePost from './components/CreatePost/CreatePost'
 import ChatFunc from '../Chats/ChatFunc';
-import { set } from 'lodash';
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
@@ -67,12 +65,12 @@ const HomePage = () => {
                     Data.listfriends.to.map(item => {
                         if (item.to !== Data._id) {
                             if (item.from === Data._id) {
-                                setListOfFriends(e => [...e, { to: item.from, toName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { to: item.from, toName: item.fromName,_id:item._id }])
                             } else {
-                                setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
                             }
                         } else {
-                            setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                            return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
                         }
                     })
                 }
@@ -80,12 +78,12 @@ const HomePage = () => {
                     Data.listfriends.from.map(item => {
                         if (item.from !== Data._id) {
                             if (item.to === Data._id) {
-                                setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
                             } else {
-                                setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
                             }
                         } else {
-                            setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
+                            return setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
                         }
                     })
                 }
