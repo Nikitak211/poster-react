@@ -15,7 +15,7 @@ const cors = require('cors');
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://host.docker.internal:7000',
+        origin: 'http://localhost:7000/',
         method: ['GET','POST']
     },
 })
