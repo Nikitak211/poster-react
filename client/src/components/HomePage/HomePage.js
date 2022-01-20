@@ -19,7 +19,9 @@ const HomePage = () => {
     const [deletePosts, setDeletePosts] = useState()
     const [createPost, setCreatePost] = useState()
     const [user_id, setUserId] = useState()
-    const [pending , setPending] = useState([])
+    const [pending, setPending] = useState([])
+    const [listOfFriends, setListOfFriends] = useState([])
+
 
     const rootPosts = posts.filter(
         (post) => {
@@ -48,7 +50,7 @@ const HomePage = () => {
         const exp = new Date(Data.exp * 1000)
         const time = new Date()
         const outdated = Data.outdated
-
+        setListOfFriends([])
         if (time === exp || outdated) {
             logout()
         }
@@ -56,17 +58,45 @@ const HomePage = () => {
             setUserId(Data._id)
             setProfile(Data.avatar);
             setProfileName(Data.author)
-            if(Data.pending !== undefined){
+            if (Data.pending !== undefined) {
                 setPending(Data.pending)
-            } 
-        } else { 
-            
-            return 
+            }
+            if (Data.listfriends !== undefined) {
+
+                if (Data.listfriends.to !== undefined) {
+                    Data.listfriends.to.map(item => {
+                        if (item.to !== Data._id ) {
+                            if(item.from === Data._id ){
+                                setListOfFriends(e=> [ ...e, {to:item.from,toName:item.fromName}])
+                            } else {
+                                setListOfFriends(e =>[ ...e, {from:item.from,fromName:item.fromName}])
+                            }        
+                        } else {
+                            setListOfFriends( e => [ ...e, {from:item.from,fromName:item.fromName}])
+                        }
+                    })
+                }
+                if (Data.listfriends.from !== undefined) {
+                    Data.listfriends.from.map(item => {
+                        if (item.from !== Data._id ) {
+                            if (item.to === Data._id) {
+                                setListOfFriends(e => [ ...e ,{from:item.from,fromName:item.fromName}])
+                            } else {
+                                setListOfFriends(e => [...e, {to:item.to,toName:item.toName}])
+                            }
+                        } else {
+                            setListOfFriends(e => [...e, {to:item.to,toName:item.toName}])
+                        }
+                    })
+                }
+            }
+        } else {
+
+            return
         }
 
     }
     const filterPosts = () => {
-
         const searchFilter = (post) => [post.content, post.author]
             .join('')
             .toLowerCase()
@@ -77,6 +107,7 @@ const HomePage = () => {
     useEffect(() => {
         let isSubscribed = true;
         loadProfile()
+        
         axios.get('/api/auth/post')
             .then(response => response.data.post)
             .then(Data => {
@@ -86,9 +117,11 @@ const HomePage = () => {
                         setDeletePosts()
                         setCreatePost()
                         filterPosts()
+                        
                     } else { return }
                 }
             })
+
         return () => { isSubscribed = false }
     }, [search, deletePosts, createPost, profile])
     return (
@@ -97,15 +130,15 @@ const HomePage = () => {
             <div>
             </div>
             <CreatePost setCreatePost={setCreatePost} avatar={profile} />
-            
+
             <div className="posts">
-               
-                    {filteredPosts.map(rootPost => (
-                        <PostedPost user_id={user_id} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
-                    ))}
-            
+
+                {filteredPosts.map(rootPost => (
+                    <PostedPost user_id={user_id} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
+                ))}
+
             </div>
-            <ChatFunc profileName={profileName} />
+            <ChatFunc listOfFriends={listOfFriends} profileName={profileName} />
         </div>
     );
 }

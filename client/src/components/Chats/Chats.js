@@ -1,5 +1,6 @@
 import React , {useState, useEffect} from 'react'
 
+import './Chat.css'
 import ScrollToBottom from 'react-scroll-to-bottom'
 
 const Chats = (prop) => {

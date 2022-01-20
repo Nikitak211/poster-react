@@ -7,9 +7,15 @@ const Pending = new Schema([{
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    fromName:{
+        type: String
+    },
     to: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    toName:{
+        type: String
     }
 }]);
 

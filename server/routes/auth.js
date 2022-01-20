@@ -310,7 +310,6 @@ router.post('/friendreq', async (req, res) => {
                     if (uid !== puid) {
                         await Friends.find({ from: puid, to: uid } && { from: uid, to: puid })
                             .then(async friend => {
-                                console.log(friend)
                                 if (friend.length >= 1) {
                                     res.send({
                                         message: "this is a bug"
@@ -329,8 +328,10 @@ router.post('/friendreq', async (req, res) => {
                                                     })
                                                 } else {
                                                     requests = new Request({
-                                                        from: uid,
-                                                        to: puid,
+                                                        from: user._id,
+                                                        fromName: user.author,
+                                                        to: puser._id,
+                                                        toName: puser.author
                                                     })
                                                     requests.save()
                                                     res.send({
@@ -341,7 +342,7 @@ router.post('/friendreq', async (req, res) => {
                                         }
                                     })
 
-                                    await Pendings.find({ from: puid, to: uid } ).then(async pendings => {
+                                    await Pendings.find({ from: puid, to: uid }).then(async pendings => {
                                         if (pendings.length >= 1) {
 
                                         } else {
@@ -350,8 +351,10 @@ router.post('/friendreq', async (req, res) => {
 
                                                 } else {
                                                     pending = new Pendings({
-                                                        from: uid,
-                                                        to: puid,
+                                                        from: user._id,
+                                                        fromName: user.author,
+                                                        to: puser._id,
+                                                        toName: puser.author
                                                     })
                                                     pending.save()
                                                 }
@@ -384,8 +387,10 @@ router.post('/acceptRequest', async (req, res) => {
                                 await Friends.find({ user_id: puid, user_id: uid })
                                     .then(async friend => {
                                         friend = new Friends({
-                                            from: puid,
-                                            to: uid
+                                            from: requester._id,
+                                            fromName: requester.author,
+                                            to: pender._id,
+                                            toName: pender.author
                                         })
                                         friend.save()
                                         await Pendings.findOneAndDelete({ from: puid, to: uid })
@@ -410,16 +415,25 @@ router.post('/friendcheck', async (req, res) => {
     const { uid, puid } = req.body
 
     if (uid !== puid) {
-        await Friends.find({ from: puid, to: uid } || { from: uid, to: puid })
-            .then(areWe => {
+        await Friends.find({ from: puid, to: uid })
+            .then(async areWe => {
                 if (areWe.length >= 1) {
                     res.send({
                         friends: true
                     })
                 } else {
-                    res.send({
-                        friends: false
-                    })
+                    await Friends.find({ from: uid, to: puid })
+                        .then(weAre => {
+                            if (weAre.length >= 1) {
+                                res.send({
+                                    friends: true
+                                })
+                            } else {
+                                res.send({
+                                    friends: false
+                                })
+                            }
+                        })
                 }
             })
     } else {
@@ -835,20 +849,77 @@ router.get('/logged', async (req, res) => {
                                 })
                         })
                     await Pendings.find({ to: user._id })
-                        .then(pending => {
-                            user.status = true
-                            user.save()
-                            res.send({
-                                success: true,
-                                exp: decodeToken.exp,
-                                author: user.author,
-                                avatar: user.avatar,
-                                status: user.status,
-                                _id: user._id,
-                                pending: pending
+                        .then(async pending => {
+                            await Friends.find({ to: user._id }).then(async to => {
+                                if (to.length >= 1) {
+                                    await Friends.find({ from: user._id }).then(async from => {
+
+                                        if (from.length >= 1) {
+                                            console.log("hi")
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: {
+                                                    to
+                                                    , from
+                                                }
+                                            })
+                                        } else {
+                                            console.log('by')
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: { to }
+                                            })
+                                        }
+                                    })
+                                } else {
+                                    await Friends.find({ from: user._id }).then(from => {
+                                        if (from.length >= 1) {
+                                            console.log("Hola")
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: { from }
+                                            })
+                                        } else {
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending
+                                            })
+                                        }
+                                    })
+                                }
                             })
                         })
-
                 }).catch((error) => {
                     res.send({
                         error: true,

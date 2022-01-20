@@ -43,8 +43,9 @@ const Notification = ({ props }) => {
                     <div className={css}>
                     <ul className="notification-ul">
                         {props.pending.map(pending => {
-                            pending = pending.from
-                            return <li key={pending} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{pending}<p onClick={() => acceptFriendRequest(pending)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
+                            let id = pending.from
+                            let name = pending.fromName
+                            return <li key={pending} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{name}<p onClick={() => acceptFriendRequest(id)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
                         })}
                     </ul>
                     </div>
