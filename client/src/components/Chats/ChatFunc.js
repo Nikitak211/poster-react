@@ -36,7 +36,7 @@ const ChatFunc = (props) => {
     }, [])
 
     return (
-        <div>
+        <>
             {!showChat ? (
                 <div className="joinChatContainer">
 
@@ -59,9 +59,9 @@ const ChatFunc = (props) => {
                                         let toName = list.toName
                                         let from = list.from
                                         let fromName = list.fromName
+                                        let _id = list._id
 
-
-                                        return <li key={to || from} onClick={() => JoinRoom(to || from)} className="friends-li">{toName || fromName}</li>
+                                        return <li key={to || from} onClick={() => JoinRoom(_id)} className="friends-li">{toName || fromName}</li>
                                     })) : (<li className="friends-li">fuck</li>)}
                                 </ul>
                             </div>
@@ -75,9 +75,9 @@ const ChatFunc = (props) => {
                 </div>
             )
                 : (
-                    <Chats socket={socket} username={username} room={Room}></Chats>
+                    <Chats setClicked={setShowChat} socket={socket} username={username} room={Room}></Chats>
                 )}
-        </div>
+        </>
     );
 }
 

@@ -1,7 +1,7 @@
 //Third party packeges
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('Bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //Local imports

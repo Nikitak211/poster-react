@@ -65,27 +65,27 @@ const HomePage = () => {
 
                 if (Data.listfriends.to !== undefined) {
                     Data.listfriends.to.map(item => {
-                        if (item.to !== Data._id ) {
-                            if(item.from === Data._id ){
-                                setListOfFriends(e=> [ ...e, {to:item.from,toName:item.fromName}])
+                        if (item.to !== Data._id) {
+                            if (item.from === Data._id) {
+                                setListOfFriends(e => [...e, { to: item.from, toName: item.fromName,_id:item._id }])
                             } else {
-                                setListOfFriends(e =>[ ...e, {from:item.from,fromName:item.fromName}])
-                            }        
+                                setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                            }
                         } else {
-                            setListOfFriends( e => [ ...e, {from:item.from,fromName:item.fromName}])
+                            setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
                         }
                     })
                 }
                 if (Data.listfriends.from !== undefined) {
                     Data.listfriends.from.map(item => {
-                        if (item.from !== Data._id ) {
+                        if (item.from !== Data._id) {
                             if (item.to === Data._id) {
-                                setListOfFriends(e => [ ...e ,{from:item.from,fromName:item.fromName}])
+                                setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
                             } else {
-                                setListOfFriends(e => [...e, {to:item.to,toName:item.toName}])
+                                setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
                             }
                         } else {
-                            setListOfFriends(e => [...e, {to:item.to,toName:item.toName}])
+                            setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
                         }
                     })
                 }
@@ -107,7 +107,7 @@ const HomePage = () => {
     useEffect(() => {
         let isSubscribed = true;
         loadProfile()
-        
+
         axios.get('/api/auth/post')
             .then(response => response.data.post)
             .then(Data => {
@@ -117,7 +117,7 @@ const HomePage = () => {
                         setDeletePosts()
                         setCreatePost()
                         filterPosts()
-                        
+
                     } else { return }
                 }
             })
@@ -138,7 +138,9 @@ const HomePage = () => {
                 ))}
 
             </div>
-            <ChatFunc listOfFriends={listOfFriends} profileName={profileName} />
+            <>
+                <ChatFunc listOfFriends={listOfFriends} profileName={profileName} />
+            </>
         </div>
     );
 }

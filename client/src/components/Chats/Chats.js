@@ -31,8 +31,8 @@ const Chats = (prop) => {
 
     return ( 
         <div className="chat-window" >
-            <div className="chat-header">
-                <p>Live Chat</p>
+            <div onClick={() => prop.setClicked(false)} className="chat-header">
+                <p onClick={() => prop.setClicked(false)}>Live Chat</p>
             </div>
             <div className="chat-body">
                 <ScrollToBottom className="message-container">

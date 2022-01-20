@@ -23,6 +23,8 @@
   .chat-window {
     width: 300px;
     height: 500px;
+    position: fixed;
+    bottom: -5em;
   }
   
   .chat-window p {
@@ -49,7 +51,6 @@
     border: 1px solid #263238;
     background: #fff;
   
-    position: relative;
   }
   .chat-window .chat-body .message-container {
     width: 100%;
