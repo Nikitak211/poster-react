@@ -1,0 +1,26 @@
+*{
+    font-family: "Helvetica Neue",Helvetica,Arial;
+}
+header{
+  width:100%;
+  height:2em;
+  margin:0 auto;
+  background-color: rgb(231, 231, 231);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-evenly;
+  box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.4);
+}
+  header ul {
+  display: inline-flex;
+  gap:1em;
+}
+header ul li{
+  margin: 0 auto;
+  display: flex;
+  gap:1em;
+  padding-left: 1em;
+}
+header ul li{
+  cursor: pointer;
+}

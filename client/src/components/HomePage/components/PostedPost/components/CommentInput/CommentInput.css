@@ -1,0 +1,43 @@
+.comment-container{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.input-area{
+    width: auto;
+    background-color:#79889a;
+    border-radius: 25px 25px 25px 25px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+}
+.profile-picture-comments{
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #84DCC6;
+    border-radius:50%;
+}
+.comment-area{
+    resize: none;
+    background-color:transparent;
+    border-radius: 5px;
+    height: fit-content;
+    color:#222222;
+    outline: none;
+}
+.comment-button{
+    border-radius: 5px;
+    color:#222222;
+    background: #95A3B3;
+}
+.comment-button:hover{
+    background-color: #f2f2f2;
+}
+.input-area:focus-within{
+    background-color: #f2f2f2;
+}
+.comment-area::-webkit-scrollbar {
+    width: 0;
+}

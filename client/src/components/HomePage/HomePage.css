@@ -1,0 +1,13 @@
+.posts{
+    width: auto;
+    height: 65vh;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    overflow-y: scroll;
+    /* overflow-y: hidden; */
+}
+.posts::-webkit-scrollbar {
+    display: none;
+  }
