@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback} from 'react'
 
 import axios from 'axios';
 
@@ -17,7 +17,6 @@ const ProfileSettings = () => {
     const [search, setSearch] = useState()
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
-    const [user_id, setUserId] = useState()
     const [pending , setPending] = useState([])
 
     const logout = async () => {
@@ -31,7 +30,7 @@ const ProfileSettings = () => {
         if (json.error) alert(json.message)
     }
 
-    const loadProfile = async () => {
+    const loadProfile = useCallback( async () => {
         const response = await axios('/api/auth/logged')
         const Data = await response.data
         const exp = new Date(Data.exp * 1000)
@@ -50,7 +49,7 @@ const ProfileSettings = () => {
             } 
         } else { return }
 
-    }
+    },[])
 
     useEffect(() => {
         let isSubscribed = true;
@@ -67,7 +66,7 @@ const ProfileSettings = () => {
                 })
         } 
         return () => { isSubscribed = false }
-    }, [search, deletePosts, createPost, profile])
+    }, [loadProfile,verify,search, deletePosts, createPost, profile])
 
     return (
         <div className="profile-settings-container">

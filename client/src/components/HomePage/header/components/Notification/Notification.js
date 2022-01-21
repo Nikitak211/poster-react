@@ -1,4 +1,4 @@
-import { useEffect , useState} from 'react';
+import { useEffect , useState, useCallback} from 'react';
 
 import axios from 'axios';
 
@@ -18,7 +18,7 @@ const Notification = ({ props }) => {
         }
     }
 
-    const acceptFriendRequest = async (puid) => {
+    const acceptFriendRequest = useCallback( async (puid) => {
         if(props.user_id !== undefined) {
             await axios.post('/api/auth/acceptRequest',{
                 uid:props.user_id,
@@ -26,7 +26,7 @@ const Notification = ({ props }) => {
             })
         }
         
-    }
+    },[props])
     
     useEffect(() => {
 

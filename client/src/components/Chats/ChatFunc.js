@@ -33,7 +33,7 @@ const ChatFunc = (props) => {
 
     useEffect(() => {
         setUsername(props.profileName)
-    }, [])
+    },[props.profileName])
 
     return (
         <>

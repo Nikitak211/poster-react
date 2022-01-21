@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef,useCallback } from 'react'
 import axios from 'axios';
 import * as timeago from 'timeago.js'
 
@@ -22,6 +22,9 @@ const PostedPost = (rootPosts) => {
   const [dislikes, setDisLikes] = useState()
   const [friends, setFriends] = useState(false)
   const [owner, setOwner] = useState(false)
+  const [commentStorages, setCommentStorages] = useState([])
+
+
 
   const ref = useRef()
 
@@ -38,8 +41,14 @@ const PostedPost = (rootPosts) => {
   const click = () => {
     if (clicked) {
       setClicked(false)
+      setComment([])
+      setComment(commentStorages.reverse())
+      
+
     } else {
       setClicked(true)
+      setComment([])
+      setComment(commentStorages.length)
     }
   }
 
@@ -94,13 +103,13 @@ const PostedPost = (rootPosts) => {
     return timeago.format(new Date(date));
   }
 
-  const checkStatus = () => {
+  const checkStatus = useCallback(() => {
     if (rootPosts.posts.status) {
       setStatus('post__author--avatar online')
     } else {
       setStatus('post__author--avatar offline')
     }
-  }
+  },[rootPosts])
   // create a class that hides all comments - instead of this function!!! it creates memory leak...
 
 
@@ -163,7 +172,7 @@ const PostedPost = (rootPosts) => {
         }
       })
   }
-  const getLikes = async () => {
+  const getLikes = useCallback(async () => {
     let isSubscribed = true;
     await axios.get(`/api/auth/likePost/${posts._id}`)
       .then(response => response.data)
@@ -181,7 +190,7 @@ const PostedPost = (rootPosts) => {
     return () => {
       isSubscribed = false
     }
-  }
+  },[posts._id])
 
   const disLike = async () => {
     await axios.post('/api/auth/dislikePost', { post_id: posts._id })
@@ -199,7 +208,7 @@ const PostedPost = (rootPosts) => {
       })
   }
 
-  const getDisLike = async () => {
+  const getDisLike =  useCallback(async () => {
     let isSubscribed = true;
     await axios.get(`/api/auth/dislikePost/${posts._id}`)
       .then(response => response.data)
@@ -216,9 +225,9 @@ const PostedPost = (rootPosts) => {
     return () => {
       isSubscribed = false
     }
-  }
+  },[posts._id])
 
-  const addFriend = async () => {
+  const addFriend = useCallback(async () => {
 
     await axios.post('/api/auth/friendreq', { uid, puid })
       .then(response => response.data)
@@ -226,40 +235,42 @@ const PostedPost = (rootPosts) => {
         console.log(data)
       })
 
-  }
+  },[uid, puid])
 
+  const userCheck = useCallback(async () => {
+    await axios.post('api/auth/friendcheck', { uid, puid })
+              .then(response =>{ 
+                setOwner(response.data.owner)
+                setFriends(response.data.friends)
+              })
+              .catch(error => {
+                console.error('error fetching Data:' + error)
+                
+              })
+              .finally(() => {
+                checkStatus()
+                getLikes()
+                getDisLike()
+              })
+  },[uid, puid,getLikes,getDisLike,checkStatus])
   useEffect(() => {
-    let isSubscribed = true;
 
     axios.post('/api/auth/comments', { post_id: posts._id })
       .then(response => response.data.comment)
       .then(data => {
-        if (isSubscribed) {
           if (data !== undefined) {
-            if (click) {
-              setComment([])
-              setComment(data.reverse())
-            } else {
-              setComment([])
-              setComment(data.length)
-            }
-
-            axios.post('api/auth/friendcheck', { uid, puid })
-              .then(response => response.data)
-              .then(data => {
-                setOwner(data.owner)
-                setFriends(data.friends)
-              })
+            setCommentStorages(data)
+            
           } else { return null }
-          checkStatus()
-          getLikes()
-          getDisLike()
-        }
+      }).catch(error => {
+        console.error('error fetching data: '+ error)
       })
-    return () => {
-      isSubscribed = false
-    }
-  }, [success, posts._id])
+      .finally(() => {
+
+      })
+      userCheck()
+
+  }, [userCheck,success, posts._id])
 
   return (
     <article className="post" key={posts._id}>

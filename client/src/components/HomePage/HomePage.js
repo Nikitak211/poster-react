@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 import './HomePage.css'
@@ -42,7 +42,7 @@ const HomePage = () => {
         if (json.error) alert(json.message)
     }
 
-    const loadProfile = async () => {
+    const loadProfile = useCallback(async () => {
         const response = await axios('/api/auth/logged')
         const Data = await response.data
         const exp = new Date(Data.exp * 1000)
@@ -93,19 +93,20 @@ const HomePage = () => {
             return
         }
 
-    }
-    const filterPosts = () => {
+    },[])
+    const filterPosts = useCallback(() => {
         const searchFilter = (post) => [post.content, post.author]
             .join('')
             .toLowerCase()
             .indexOf(search.toLowerCase()) !== -1;
         setFilteredPosts(rootPosts.reverse().filter(searchFilter))
-    }
+        loadProfile()
+    },[search,rootPosts,loadProfile])
 
     useEffect(() => {
         let isSubscribed = true;
-        loadProfile()
-
+        
+        
         axios.get('/api/auth/post')
             .then(response => response.data.post)
             .then(Data => {
@@ -114,14 +115,19 @@ const HomePage = () => {
                         setPosts(Data)
                         setDeletePosts()
                         setCreatePost()
-                        filterPosts()
-
+                        
                     } else { return }
                 }
+            }).catch(err => {
+                console.error('failed to fetch data: '+err)
+            })
+            .finally(() => {
+                filterPosts()
             })
 
         return () => { isSubscribed = false }
-    }, [search, deletePosts, createPost, profile])
+    }, [filterPosts , deletePosts, createPost, profile])
+
     return (
         <div>
             <Header user_id={user_id} pending={pending} setSearch={setSearch} />

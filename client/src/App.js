@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import axios from 'axios';
 
 
@@ -79,14 +79,10 @@ function App() {
   }
   if (token) {
     return (
-      <div>
-        <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route exact path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfileSettings />} />
           </Routes>
-        </BrowserRouter>
-      </div>
     )
   }
 
