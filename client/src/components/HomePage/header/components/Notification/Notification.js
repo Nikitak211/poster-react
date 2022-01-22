@@ -1,4 +1,4 @@
-import { useEffect , useState, useCallback} from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import axios from 'axios';
 
@@ -18,19 +18,17 @@ const Notification = ({ props }) => {
         }
     }
 
-    const acceptFriendRequest = useCallback( async (puid) => {
-        if(props.user_id !== undefined) {
-            await axios.post('/api/auth/acceptRequest',{
-                uid:props.user_id,
+    const acceptFriendRequest = useCallback(async (puid) => {
+        if (props.user_id !== undefined) {
+            await axios.post('/api/auth/acceptRequest', {
+                uid: props.user_id,
                 puid
             })
         }
-        
-    },[props])
-    
-    useEffect(() => {
+    }, [props])
 
-    },[acceptFriendRequest])
+    useEffect(() => {
+    }, [acceptFriendRequest])
 
     return (
         <>
@@ -41,13 +39,13 @@ const Notification = ({ props }) => {
                         <div onClick={click} className="notification-bell"></div>
                     </div>
                     <div className={css}>
-                    <ul className="notification-ul">
-                        {props.pending.map(pending => {
-                            let id = pending.from
-                            let name = pending.fromName
-                            return <li key={pending} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{name}<p onClick={() => acceptFriendRequest(id)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
-                        })}
-                    </ul>
+                        <ul className="notification-ul">
+                            {props.pending.map(pending => {
+                                let id = pending.from
+                                let name = pending.fromName
+                                return <li key={pending} style={{ color: 'black', fontSize: '6px', height: '1.8em', cursor: 'default' }}>{name}<p onClick={() => acceptFriendRequest(id)} style={{ color: 'black', fontSize: '10px', cursor: 'pointer' }}>+</p></li>
+                            })}
+                        </ul>
                     </div>
                 </div>
             ) : (
@@ -60,8 +58,7 @@ const Notification = ({ props }) => {
                     </div>
                     <div className={css}></div>
                 </div>
-            )
-            }
+            )}
         </>
     );
 }

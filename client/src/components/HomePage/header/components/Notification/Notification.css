@@ -46,7 +46,7 @@
 .notification-open-container{
     position: relative;
     width: 7em;
-    height:0;
+    height:0px;
     margin: auto;
     bottom:0em;
     background: #f2f2f2;

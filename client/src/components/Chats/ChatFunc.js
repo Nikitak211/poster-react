@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
-
 import { useState, useEffect } from 'react'
+
 import './Chat.css'
 
 import Chats from './Chats';
@@ -13,7 +13,7 @@ const ChatFunc = (props) => {
     const [showChat, setShowChat] = useState(false)
     const [clicked, setClicked] = useState(false)
     const [btnCss, setBtnCss] = useState('btn-friends-list')
-    
+
     const JoinRoom = (room) => {
         if (username !== "" && room !== "") {
             socket.emit('join_room', room)
@@ -33,7 +33,7 @@ const ChatFunc = (props) => {
 
     useEffect(() => {
         setUsername(props.profileName)
-    },[props.profileName])
+    }, [props.profileName])
 
     return (
         <>

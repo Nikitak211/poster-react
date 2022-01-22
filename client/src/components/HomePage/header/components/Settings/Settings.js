@@ -4,11 +4,9 @@ import HomePage from './components/HomePage/HomePage'
 import Profile from './components/Profile/Profile'
 import LogoutButton from '../LogoutButton/LogoutButton';
 
-
 import './Settings.css'
 
 const Settings = () => {
-
     const [click, setClick] = useState(false)
     const [css, setCss] = useState("settings-open-container")
 
@@ -22,7 +20,6 @@ const Settings = () => {
         }
     }
     useEffect(() => {
-
     }, [])
 
     if (click) {
@@ -33,7 +30,7 @@ const Settings = () => {
                 </div>
                 <div className={css}>
                     <ul className="settings-ul">
-                        <HomePage/>
+                        <HomePage />
                         <Profile />
                         <LogoutButton />
                     </ul>

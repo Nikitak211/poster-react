@@ -20,9 +20,9 @@ const HomePage = () => {
     const [pending, setPending] = useState([])
     const [listOfFriends, setListOfFriends] = useState([])
 
-
     const rootPosts = posts.filter(
         (post) => {
+
             if (post.length !== 0) {
                 let t1 = new Date()
                 let ct = post.date
@@ -43,7 +43,8 @@ const HomePage = () => {
     }
 
     const loadProfile = useCallback(async () => {
-        const response = await axios('/api/auth/logged')
+
+        const response = await axios.get('/api/auth/logged')
         const Data = await response.data
         const exp = new Date(Data.exp * 1000)
         const time = new Date()
@@ -65,12 +66,12 @@ const HomePage = () => {
                     Data.listfriends.to.map(item => {
                         if (item.to !== Data._id) {
                             if (item.from === Data._id) {
-                                return setListOfFriends(e => [...e, { to: item.from, toName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { to: item.from, toName: item.fromName, _id: item._id }])
                             } else {
-                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName, _id: item._id }])
                             }
                         } else {
-                            return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                            return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName, _id: item._id }])
                         }
                     })
                 }
@@ -78,22 +79,20 @@ const HomePage = () => {
                     Data.listfriends.from.map(item => {
                         if (item.from !== Data._id) {
                             if (item.to === Data._id) {
-                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { from: item.from, fromName: item.fromName, _id: item._id }])
                             } else {
-                                return setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
+                                return setListOfFriends(e => [...e, { to: item.to, toName: item.toName, _id: item._id }])
                             }
                         } else {
-                            return setListOfFriends(e => [...e, { to: item.to, toName: item.toName,_id:item._id }])
+                            return setListOfFriends(e => [...e, { to: item.to, toName: item.toName, _id: item._id }])
                         }
                     })
                 }
             }
         } else {
-
             return
         }
-
-    },[])
+    }, [])
     const filterPosts = useCallback(() => {
         const searchFilter = (post) => [post.content, post.author]
             .join('')
@@ -101,32 +100,30 @@ const HomePage = () => {
             .indexOf(search.toLowerCase()) !== -1;
         setFilteredPosts(rootPosts.reverse().filter(searchFilter))
         loadProfile()
-    },[search,rootPosts,loadProfile])
+    }, [search, rootPosts, loadProfile])
 
     useEffect(() => {
         let isSubscribed = true;
-        
-        
+
         axios.get('/api/auth/post')
             .then(response => response.data.post)
             .then(Data => {
                 if (isSubscribed) {
                     if (Data !== undefined) {
                         setPosts(Data)
-                        setDeletePosts()
-                        setCreatePost()
-                        
+                        filterPosts()
                     } else { return }
                 }
             }).catch(err => {
-                console.error('failed to fetch data: '+err)
+                console.error('failed to fetch data: ' + err)
             })
             .finally(() => {
-                filterPosts()
+                setDeletePosts()
+                setCreatePost()
             })
 
         return () => { isSubscribed = false }
-    }, [filterPosts , deletePosts, createPost, profile])
+    }, [profile, createPost, deletePosts,search]);
 
     return (
         <div>
@@ -134,13 +131,10 @@ const HomePage = () => {
             <div>
             </div>
             <CreatePost setCreatePost={setCreatePost} avatar={profile} />
-
             <div className="posts">
-
                 {filteredPosts.map(rootPost => (
                     <PostedPost user_id={user_id} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
                 ))}
-
             </div>
             <>
                 <ChatFunc listOfFriends={listOfFriends} profileName={profileName} />

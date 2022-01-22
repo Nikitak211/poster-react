@@ -1,16 +1,16 @@
 const Login = (props) => {
-    return ( 
+    return (
         <li
             onClick={() => {
-                if (props.props.visibleLogin){
+                if (props.props.visibleLogin) {
                     props.props.setVisibleRegister(true)
                     props.props.setVisibleLogin(false)
                 } else {
                     props.props.setVisibleLogin(true)
                 }
-                
+
             }}
-        >Login</li> );
+        >Login</li>);
 }
- 
+
 export default Login;

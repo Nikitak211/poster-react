@@ -411,8 +411,8 @@ router.post('/acceptRequest', async (req, res) => {
 })
 
 
-router.post('/friendcheck', async (req, res) => {
-    const { uid, puid } = req.body
+router.get('/friendcheck/:uid&:puid', async (req, res) => {
+    const { uid, puid } = req.params
 
     if (uid !== puid) {
         await Friends.find({ from: puid, to: uid })
@@ -807,10 +807,11 @@ router.get('/post/:_id', async (req, res) => {
         })
 })
 
-router.post('/comments', async (req, res) => {
+router.get('/comments/:post_id', async (req, res) => {
     const {
         post_id
-    } = req.body
+    } = req.params
+
     Comments.find({ post_id })
         .then((comment) => {
             res.send({ comment })
@@ -855,7 +856,6 @@ router.get('/logged', async (req, res) => {
                                     await Friends.find({ from: user._id }).then(async from => {
 
                                         if (from.length >= 1) {
-                                            console.log("hi")
                                             user.status = true
                                             user.save()
                                             res.send({
@@ -872,7 +872,6 @@ router.get('/logged', async (req, res) => {
                                                 }
                                             })
                                         } else {
-                                            console.log('by')
                                             user.status = true
                                             user.save()
                                             res.send({
@@ -890,7 +889,6 @@ router.get('/logged', async (req, res) => {
                                 } else {
                                     await Friends.find({ from: user._id }).then(from => {
                                         if (from.length >= 1) {
-                                            console.log("Hola")
                                             user.status = true
                                             user.save()
                                             res.send({

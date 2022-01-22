@@ -21,7 +21,7 @@ const CreatePost = (props) => {
             })
     };
     useEffect(() => {
-    },[])
+    }, [])
 
     return (
         <form className="create_post_arcticle" action="" onSubmit={handleSubmit((data) => {

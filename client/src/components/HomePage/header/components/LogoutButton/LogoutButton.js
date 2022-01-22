@@ -14,14 +14,13 @@ const LogoutButton = () => {
     }
 
     useEffect(() => {
+    }, [])
 
-    },[])
-
-    return ( 
-            <li className="logout"
+    return (
+        <li className="logout"
             onClick={logout}
-            >Logout</li>
-     );
+        >Logout</li>
+    );
 }
- 
+
 export default LogoutButton;

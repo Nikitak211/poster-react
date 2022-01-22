@@ -22,9 +22,6 @@ const PostedPost = (rootPosts) => {
   const [dislikes, setDisLikes] = useState()
   const [friends, setFriends] = useState(false)
   const [owner, setOwner] = useState(false)
-  const [commentStorages, setCommentStorages] = useState([])
-
-
 
   const ref = useRef()
 
@@ -41,14 +38,8 @@ const PostedPost = (rootPosts) => {
   const click = () => {
     if (clicked) {
       setClicked(false)
-      setComment([])
-      setComment(commentStorages.reverse())
-      
-
     } else {
       setClicked(true)
-      setComment([])
-      setComment(commentStorages.length)
     }
   }
 
@@ -64,8 +55,6 @@ const PostedPost = (rootPosts) => {
         }
       })
   }
-
-
 
   const Grow = () => {
     return (
@@ -110,12 +99,9 @@ const PostedPost = (rootPosts) => {
       setStatus('post__author--avatar offline')
     }
   },[rootPosts])
-  // create a class that hides all comments - instead of this function!!! it creates memory leak...
-
 
   const RowsToShow = () => {
     if (showRows) {
-
       if (posts.content.length > 331) {
         return (
           <div className="post__body-container">
@@ -152,8 +138,6 @@ const PostedPost = (rootPosts) => {
           </div>
         )
       }
-
-
     }
   }
 
@@ -172,7 +156,9 @@ const PostedPost = (rootPosts) => {
         }
       })
   }
+  
   const getLikes = useCallback(async () => {
+    
     let isSubscribed = true;
     await axios.get(`/api/auth/likePost/${posts._id}`)
       .then(response => response.data)
@@ -185,7 +171,6 @@ const PostedPost = (rootPosts) => {
             setLikes(ammountOfLikes)
           }
         }
-
       })
     return () => {
       isSubscribed = false
@@ -228,49 +213,40 @@ const PostedPost = (rootPosts) => {
   },[posts._id])
 
   const addFriend = useCallback(async () => {
-
     await axios.post('/api/auth/friendreq', { uid, puid })
-      .then(response => response.data)
-      .then(data => {
-        console.log(data)
-      })
-
   },[uid, puid])
 
   const userCheck = useCallback(async () => {
-    await axios.post('api/auth/friendcheck', { uid, puid })
+    await axios.get(`api/auth/friendcheck/${uid}&${puid}`)
               .then(response =>{ 
                 setOwner(response.data.owner)
                 setFriends(response.data.friends)
               })
               .catch(error => {
                 console.error('error fetching Data:' + error)
-                
               })
               .finally(() => {
                 checkStatus()
                 getLikes()
                 getDisLike()
               })
-  },[uid, puid,getLikes,getDisLike,checkStatus])
-  useEffect(() => {
+  },[uid, puid,checkStatus,getLikes,getDisLike])
 
-    axios.post('/api/auth/comments', { post_id: posts._id })
+  useEffect(() => {
+    const post_id = posts._id
+    axios.get(`/api/auth/comments/${post_id}`)
       .then(response => response.data.comment)
       .then(data => {
           if (data !== undefined) {
-            setCommentStorages(data)
-            
+            setComment(data) 
           } else { return null }
       }).catch(error => {
         console.error('error fetching data: '+ error)
       })
       .finally(() => {
-
+        userCheck()
       })
-      userCheck()
-
-  }, [userCheck,success, posts._id])
+  },[success])
 
   return (
     <article className="post" key={posts._id}>
@@ -293,14 +269,13 @@ const PostedPost = (rootPosts) => {
                 <p className="post__author--name">{posts.author}</p>
                 <p className=" post__date">{returnPostDate(new Date(posts.date))}</p>
               </div>
-
             </div>
           </div>
         </div>
         <RowsToShow />
         <div className="inline-inputs">
           <CommentInput avatar={rootPosts.avatar} setSuccess={setSuccess} pending={posts._id} />
-          <p onClick={deletePosts} className="post__delete"></p>
+          {owner ? (<p onClick={deletePosts} className="post__delete"></p>) : (<></>)}
         </div>
         {rootComments.length !== 0 ?
           <div >

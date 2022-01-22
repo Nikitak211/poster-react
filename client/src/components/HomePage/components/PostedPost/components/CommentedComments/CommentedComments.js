@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback} from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import * as timeago from 'timeago.js'
 
 import axios from 'axios';
@@ -19,42 +19,42 @@ const CommentedComments = ({ rootComment }) => {
         await axios.post('/api/auth/likeComments', { comment_id: rootComment._id })
             .then(response => response.data)
             .then(data => {
+                getLikes()
                 if (data.error) {
                     alert(data.message)
                 }
             })
     }
 
-    const getLikes = useCallback( async () => {
+    const getLikes = useCallback(async () => {
         await axios.get(`/api/auth/likeComments/${rootComment._id}`)
             .then(response => response.data)
             .then(data => {
                 let ammountOfLikes = data.like.length
-                getLikes()
                 if (ammountOfLikes !== undefined) {
                     setLikes(ammountOfLikes)
                 } else {
                     setLikes(0)
                 }
             })
-    },[rootComment])
+    }, [rootComment])
 
     const disLike = async () => {
         await axios.post('/api/auth/dislikeComments', { comment_id: rootComment._id })
             .then(response => response.data)
             .then(data => {
+                getDisLike()
                 if (data.error) {
                     alert(data.message)
                 }
             })
     }
 
-    const getDisLike = useCallback( async () => {
+    const getDisLike = useCallback(async () => {
         await axios.get(`/api/auth/dislikeComments/${rootComment._id}`)
             .then(response => response.data)
             .then(data => {
                 let ammountOfDisLikes = data.dislike.length
-                getDisLike()
                 if (ammountOfDisLikes !== undefined) {
                     setDisLikes(ammountOfDisLikes)
                 } else {
@@ -63,9 +63,9 @@ const CommentedComments = ({ rootComment }) => {
 
             })
 
-    },[rootComment])
+    }, [rootComment])
 
-    const checkStatus = useCallback( async () => {
+    const checkStatus = useCallback(async () => {
         if (rootComment.status) {
             setStatus('comments online')
         } else {
@@ -73,11 +73,11 @@ const CommentedComments = ({ rootComment }) => {
         }
         getLikes()
         getDisLike()
-    },[getLikes,getDisLike,rootComment]);
+    }, [getLikes, getDisLike, rootComment]);
 
     useEffect(() => {
-            checkStatus()
-    }, [checkStatus])
+        checkStatus()
+    }, [])
     return (
         <div key={rootComment._id} className="commented-containers">
             <ul className="commented-ul">
