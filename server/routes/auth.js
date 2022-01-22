@@ -15,10 +15,6 @@ const Friends = require('../models/Friends')
 const Pendings = require('../models/Pending')
 const Request = require('../models/Request')
 
-
-
-
-
 router.use(express.json())
 
 router.post('/register', async (req, res) => {
@@ -818,7 +814,7 @@ router.get('/comments/:post_id', async (req, res) => {
         })
 })
 
-router.get('/logged', async (req, res) => {
+router.get('/profile', async (req, res) => {
     const token = req.session.authorization;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
@@ -921,6 +917,7 @@ router.get('/logged', async (req, res) => {
                 }).catch((error) => {
                     res.send({
                         error: true,
+                        outdated: true,
                         message: error,
                     });
                 });

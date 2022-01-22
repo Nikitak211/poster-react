@@ -44,7 +44,7 @@ const HomePage = () => {
 
     const loadProfile = useCallback(async () => {
 
-        const response = await axios.get('/api/auth/logged')
+        const response = await axios.get('/api/auth/profile')
         const Data = await response.data
         const exp = new Date(Data.exp * 1000)
         const time = new Date()

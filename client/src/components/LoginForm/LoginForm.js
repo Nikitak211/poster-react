@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 import './LoginForm.css';
+import Input from '../Input';
 
 const LoginForm = () => {
     const {
@@ -20,10 +21,8 @@ const LoginForm = () => {
             password: password,
             email: email
         }
-        const api = axios.create({
-            baseUrl: 'http://localhost:7000'
-        })
-        await api.post('/api/auth/login', user)
+
+        await axios.post('/api/auth/login', user)
             .then(response => {
                 let data = response.data
                 if (data.success) {
@@ -43,27 +42,14 @@ const LoginForm = () => {
             <div>
                 <label className={errors.email?.message || error || success}>Email</label>
                 <small className={errors.email?.message || error}>{errors.email?.message || error}</small>
-                <input type="email" {...register("email", {
-                    required: "email is required",
-                    pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "invalid email address"
-                    }
-                }
-                )}></input>
+                <Input type={"email"} callback={"email"} required={"email is required"} value={/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i} func={register} message="invalid email address" />
             </div>
             <div>
                 <label className={errors.Password?.message || error || success}>Password</label>
                 <small className={errors.Password?.message || error}>{errors.Password?.message || error}</small>
-                <input type="Password" {...register("Password", {
-                    required: "password is required",
-                    minLength: {
-                        value: 8,
-                        message: "minimum length is 8"
-                    }
-                })}></input>
+                <Input type={"Password"} callback={"Password"} required={"password is required"} value={8} func={register} message="minimum length is 8" />
             </div>
-            <button>Login</button>
+            <button type="submit">Login</button>
             <ul className="btn btn-ul">
                 <li className="btn btn-li">Forgot password</li>
                 <li className="btn btn-li">Sign in with Google</li>

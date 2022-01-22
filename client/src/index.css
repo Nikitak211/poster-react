@@ -8,7 +8,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: #FFFFFF;
 }
 body{ 
   width:100%;
@@ -19,14 +18,12 @@ body{
   background-size: cover;
 }
 input,
-button,
 textarea,
 input::placeholder{
     font-family: inherit;
     color: #FFFFFF;
 }
 input::placeholder,
-button,
 textarea::placeholder,
 input{
     font-family: inherit;

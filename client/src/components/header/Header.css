@@ -24,3 +24,8 @@ header ul li{
 header ul li{
   cursor: pointer;
 }
+.btn-headers{
+  background-color: transparent;
+  font-family: "Helvetica Neue",Helvetica,Arial;
+  cursor: pointer;
+}

@@ -27,7 +27,6 @@ app.use(cors())
 
 //Local imports
 const AuthRoute = require('./routes/auth')
-const topSecret = require('./routes/authed')
 
 // MongoDBUri form env file goes here.
 const mongoDBUri = process.env.MONGODB_URI
@@ -83,7 +82,6 @@ app.get('/', isAuth, (req, res) => {
 app.use(express.static(path.join(__dirname, "..", "client/build")));
 
 app.use('/api/auth/', AuthRoute)
-app.use('/api/auth/', topSecret)
 
 app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, "..", "client/build", "index.html"));
