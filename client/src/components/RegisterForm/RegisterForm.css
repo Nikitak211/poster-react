@@ -15,18 +15,20 @@ form button{
     justify-content: center;
     border: 0 solid transparent;
     border-radius:5px;
-    background-color: white;
+    color: #222222;
+    background-color: #FFFFFF;
 }
-form{
+.FormRegister{
     color: white;
     width: 15em;
     max-height: max-content;
     min-height: 20em;
     margin: 1em auto;
     border: 1px solid transparent;
-    background: rgba(231, 231, 231, 0.129);
+    background: #4B4E6D;
     border-radius:10px;
     box-shadow: 0px 0px 5px rgba(47, 47, 47, 0.571);
+    
 }
 form div{
     display: grid;
@@ -43,7 +45,8 @@ label{
 .required,
 .minimum ,
 .doesnt.match,
-.email.allready.exsisting{
+.email.allready.exsisting,
+.email.is.not.matching{
     text-shadow: 0 0 2px rgb(233, 72, 72), 0 0 3px rgb(233, 72, 72);
 }
 .user.has.created{
@@ -51,8 +54,8 @@ label{
 }
 .btn.btn-ul{
     display: flex;
-    align-items: start;
-    justify-content: start;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin:85px auto;
 }
 .btn.btn-li{
@@ -65,4 +68,8 @@ label{
 small {
     margin:auto;
     font-size: 10px;
+}
+.FormRegister div input,
+.FormRegister div input::placeholder {
+    color: #222222;
 }

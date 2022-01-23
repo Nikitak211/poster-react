@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import './RegisterForm.css';
 
+import './RegisterForm.css';
 
 const RegisterForm = () => {
     const {
@@ -35,7 +35,6 @@ const RegisterForm = () => {
                     return window.location = "/";
                 }
                 if (data.error) return setError(data.message)
-
             })
             .catch(err => {
                 setError(err.data.message)
@@ -43,45 +42,46 @@ const RegisterForm = () => {
     }
 
     return (
-        <form action="" onSubmit={handleSubmit((data) => {
+        <form className="FormRegister" action="" onSubmit={handleSubmit((data) => {
             createUser(data.username, data.Password, data.email)
         })}>
             <div>
                 <label className={errors.username?.message || success}>Username</label>
-                <small className={"small error"}>{errors.username?.message}</small>
+                <small className={errors.username?.message}>{errors.username?.message}</small>
                 <input type="username"
                     {...register("username", {
                         required: "cannot be empty",
                         validate: value => !value.includes('@') || "cannot be email"
-
                     }
                     )}
                 ></input>
             </div>
             <div>
                 <label className={errors.email?.message || success || error}>Email</label>
-                <small className={"small error"}>{errors.email?.message}</small>
+                <small className={errors.email?.message}>{errors.email?.message}</small>
                 <input type="email"
                     {...register("email", {
                         required: "email is required",
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: "invalid email address"
-                        }
+                        },
+                        validate: value => value === watch("emailValidation") || "email is not matching"
                     }
                     )}
                 ></input>
             </div>
             <div>
-                <label className={errors.email?.message || success || error}>Email Verification</label>
-                <small className={"small error"}>{errors.email?.message}</small>
+                <label className={errors.emailValidation?.message || success || error}>Email Verification</label>
+                <small className={errors.emailValidation?.message}>{errors.email?.message}</small>
                 <input type="email"
                     {...register("emailValidation", {
                         required: "email is required",
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: "invalid email address"
-                        }
+                        },
+                        validate: value => value === watch('email') || "email is not matching"
                     }
                     )}
                 ></input>
@@ -111,14 +111,12 @@ const RegisterForm = () => {
                             message: "minimum length is 8"
                         },
                         validate: value => value === watch('Password') || "password doesnt match"
-
                     })}
                 ></input>
             </div>
             <button>Sign Up</button>
         </form>
     );
-
 }
 
 export default RegisterForm;

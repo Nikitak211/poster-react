@@ -13,7 +13,6 @@ const isAuth = (req, res, next) => {
 
 router.post('/authed', isAuth, (req, res) => {
     try {
-
         res.send(
             {
                 success: true,
@@ -24,6 +23,5 @@ router.post('/authed', isAuth, (req, res) => {
         res.send(err)
     }
 })
-
 
 module.exports = router;

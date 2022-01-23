@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import './LoginForm.css';
 
-const LoginForm = ({setToken}) => {
+const LoginForm = () => {
     const {
         register,
         handleSubmit,
@@ -14,7 +14,6 @@ const LoginForm = ({setToken}) => {
 
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-
 
     const LogUser = async (email, password) => {
         const user = {
@@ -32,15 +31,13 @@ const LoginForm = ({setToken}) => {
                     return window.location = "/";
                 }
                 if (data.error) return setError(data.message)
-                console.log(data)
-
             })
             .catch(err => {
                 setError(err.data.message)
             })
     }
     return (
-        <form action="" onSubmit={handleSubmit((data) => {
+        <form className="LoginForm" action="" onSubmit={handleSubmit((data) => {
             LogUser(data.email, data.Password)
         })}>
             <div>

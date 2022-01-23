@@ -2,12 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 //Schema creater and models
-
-const postSchema = new Schema([{
+const Post = new Schema([{
     author: {
-        type: String
-    },
-    title: {
         type: String
     },
     content: {
@@ -18,9 +14,16 @@ const postSchema = new Schema([{
     },
     date: {
         type: Date
+    },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    status: {
+        type: Boolean
     }
 }]);
 
-const postdata = mongoose.model('Post', postSchema);
+const Posts = mongoose.model('Post', Post);
 
-module.exports = postdata;
+module.exports = Posts;

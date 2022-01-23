@@ -1,0 +1,32 @@
+.profile-settings-container{
+    position: relative;
+    width:100%;
+    height:fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top:0;
+    backdrop-filter: blur(4px);
+    border-radius:5px;
+}
+.container-header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap:1em;
+    margin:0 auto;
+    background-color: #95A3B3;
+    border:1px solid white;
+}
+.profile-main-avatar{
+    width:fit-content;
+    height:fit-content;
+    border:2px solid black;
+    background-color: rgba(214, 214, 214, 0.714);
+}
+.container-header h2{
+    color: #f2f2f2;
+    position: relative;
+    bottom: 0;
+}
