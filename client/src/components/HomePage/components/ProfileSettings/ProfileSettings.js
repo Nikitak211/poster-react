@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import axios from 'axios';
 
@@ -17,7 +17,7 @@ const ProfileSettings = () => {
     const [search, setSearch] = useState()
     const [profile, setProfile] = useState();
     const [profileName, setProfileName] = useState();
-
+    const [pending, setPending] = useState([])
 
     const logout = async () => {
         const response = await axios.post('/api/auth/logout')
@@ -30,7 +30,7 @@ const ProfileSettings = () => {
         if (json.error) alert(json.message)
     }
 
-    const loadProfile = async () => {
+    const loadProfile = useCallback(async () => {
         const response = await axios('/api/auth/logged')
         const Data = await response.data
         const exp = new Date(Data.exp * 1000)
@@ -44,9 +44,12 @@ const ProfileSettings = () => {
             setVerify(Data._id)
             setProfile(Data.avatar);
             setProfileName(Data.author)
+            if (Data.pending !== undefined) {
+                setPending(Data.pending)
+            }
         } else { return }
 
-    }
+    }, [])
 
     useEffect(() => {
         let isSubscribed = true;
@@ -61,25 +64,24 @@ const ProfileSettings = () => {
                         setCreatePost()
                     }
                 })
-        } 
+        }
         return () => { isSubscribed = false }
     }, [search, deletePosts, createPost, profile])
 
     return (
         <div className="profile-settings-container">
-            <Header setSearch={setSearch} />
+            <Header user_id={verify} pending={pending} setSearch={setSearch} />
             <div className="container-header">
                 <div className="profile-main-avatar">
                     <img width={100} src={profile} alt={profileName}></img>
                 </div>
-
                 <h2>{profileName}</h2>
             </div>
             <div className="container-body">
                 <CreatePost setCreatePost={setCreatePost} avatar={profile} />
                 <div className="posts">
                     {posts.map(rootPost => (
-                        <PostedPost setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
+                        <PostedPost user_id={verify} setDeletePosts={setDeletePosts} avatar={profile} key={rootPost._id} posts={rootPost} />
                     ))}
                 </div>
             </div>

@@ -1,7 +1,7 @@
 //Third party packeges
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('Bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //Local imports
@@ -11,6 +11,9 @@ const Comments = require('../models/Comments')
 const Like = require('../models/Likes')
 const DisLikes = require('../models/DisLikes');
 const Password = require('../models/Password');
+const Friends = require('../models/Friends')
+const Pendings = require('../models/Pending')
+const Request = require('../models/Request')
 
 router.use(express.json())
 
@@ -298,95 +301,142 @@ router.post('/friendreq', async (req, res) => {
     const { uid, puid } = req.body
     await User.findByIdAndUpdate({ _id: uid })
         .then(async user => {
-                await User.findByIdAndUpdate({ _id: puid })
-                    .then(puser => {
-                        if (uid !== puid) {
-                            console.log(puser._id, user._id)
-                            if (user.request[0] !== undefined && user.request !== undefined) {
-                                user.request.map(userrequest => {
-                                    if (userrequest === puser._id + user._id) {
-                                        res.send({
-                                            message: "request allready sent"
-                                        })
-                                    }
-                                })
-                            } else {
-                                user.request.push((puser._id + user._id))
-                                user.save()
-                                res.send({
-                                    message: "friend request sent"
-                                })
-                            }
+            await User.findByIdAndUpdate({ _id: puid })
+                .then(async puser => {
+                    if (uid !== puid) {
+                        await Friends.find({ from: puid, to: uid } && { from: uid, to: puid })
+                            .then(async friend => {
+                                if (friend.length >= 1) {
+                                    res.send({
+                                        message: "this is a bug"
+                                    })
+                                } else {
+                                    await Request.find({ from: puid, to: uid }).then(async requests => {
+                                        if (requests.length >= 1) {
+                                            res.send({
+                                                message: "request allready sent"
+                                            })
+                                        } else {
+                                            await Request.find({ from: uid, to: puid }).then(requesting => {
+                                                if (requesting.length >= 1) {
+                                                    res.send({
+                                                        message: "request allready sent"
+                                                    })
+                                                } else {
+                                                    requests = new Request({
+                                                        from: user._id,
+                                                        fromName: user.author,
+                                                        to: puser._id,
+                                                        toName: puser.author
+                                                    })
+                                                    requests.save()
+                                                    res.send({
+                                                        message: "friend request sent"
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    })
 
-                            if (puser.pending[0] !== undefined && puser.pending !== undefined) {
-                                puser.pending.map(puserpending => {
-                                    if (puserpending === puser._id + user._id) {
-                                        return null
-                                    }
-                                })
-                            } else {
-                                puser.pending.push((puser._id + user._id))
-                                puser.save()
-                            }
-                        } else {
-                            res.send({
-                                success: false,
-                                message: 'cannot add your self as a friend.'
+                                    await Pendings.find({ from: puid, to: uid }).then(async pendings => {
+                                        if (pendings.length >= 1) {
+
+                                        } else {
+                                            await Pendings.find({ from: uid, to: puid }).then(pending => {
+                                                if (pending.length >= 1) {
+
+                                                } else {
+                                                    pending = new Pendings({
+                                                        from: user._id,
+                                                        fromName: user.author,
+                                                        to: puser._id,
+                                                        toName: puser.author
+                                                    })
+                                                    pending.save()
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
                             })
-                        }
-                    })
-             
+                    } else {
+                        res.send({
+                            success: false,
+                            message: 'cannot add your self as a friend.'
+                        })
+                    }
+                })
+
         })
 })
 
 router.post('/acceptRequest', async (req, res) => {
     const { uid, puid } = req.body
-    console.log(uid, puid)
+
     await User.findByIdAndUpdate(uid)
-        .then(async user => {
+        .then(async pender => {
             await User.findByIdAndUpdate(puid)
-                .then(async user2 => {
-                    console.log('im here')
-                    user.request.map(main => {
-                        console.log(main)
-                        user2.pending.map(target => {
-                            console.log(target)
-                            if (main === target) {
-                                console.log('its matching')
-                                user.friends.push(target)
-                                user2.friends.push(target)
-                                let x = user.request.indexOf(target)
-                                let y = user2.pending.indexOf(target)
-                                user.request.splice(x, 1)
-                                user2.pending.splice(y, 1)
-                                user.save()
-                                user2.save()
+                .then(async requester => {
+                    await Pendings.findOne({ from: puid, to: uid })
+                        .then(async pending => {
+                            if (pending !== null) {
+                                await Friends.find({ user_id: puid, user_id: uid })
+                                    .then(async friend => {
+                                        friend = new Friends({
+                                            from: requester._id,
+                                            fromName: requester.author,
+                                            to: pender._id,
+                                            toName: pender.author
+                                        })
+                                        friend.save()
+                                        await Pendings.findOneAndDelete({ from: puid, to: uid })
+                                            .then(remove => {
+                                                return remove
+                                            })
+                                        await Request.findOneAndDelete({ from: puid, to: uid })
+                                            .then(remove => {
+                                                return remove
+                                            })
+                                    })
                             }
                         })
-                    })
+
                 })
         })
 
 })
 
 
-router.post('/friendcheck', async (req, res) => {
-    const { uid, puid } = req.body
+router.get('/friendcheck/:uid&:puid', async (req, res) => {
+    const { uid, puid } = req.params
 
-    await User.findById(uid)
-        .then(async main => {
-            await User.findById(puid)
-                .then(target => {
-                    if (main._id !== target._id) {
-                        if(main.friends.includes(target.friends)){
-                            res.send({
-                                friends: true
-                            })
-                        }
-
-                    }
-                })
+    if (uid !== puid) {
+        await Friends.find({ from: puid, to: uid })
+            .then(async areWe => {
+                if (areWe.length >= 1) {
+                    res.send({
+                        friends: true
+                    })
+                } else {
+                    await Friends.find({ from: uid, to: puid })
+                        .then(weAre => {
+                            if (weAre.length >= 1) {
+                                res.send({
+                                    friends: true
+                                })
+                            } else {
+                                res.send({
+                                    friends: false
+                                })
+                            }
+                        })
+                }
+            })
+    } else {
+        res.send({
+            owner: true
         })
+    }
 })
 
 
@@ -753,17 +803,18 @@ router.get('/post/:_id', async (req, res) => {
         })
 })
 
-router.post('/comments', async (req, res) => {
+router.get('/comments/:post_id', async (req, res) => {
     const {
         post_id
-    } = req.body
+    } = req.params
+
     Comments.find({ post_id })
         .then((comment) => {
             res.send({ comment })
         })
 })
 
-router.get('/logged', async (req, res) => {
+router.get('/profile', async (req, res) => {
     const token = req.session.authorization;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodeToken) => {
@@ -794,20 +845,79 @@ router.get('/logged', async (req, res) => {
                                     } else { return null }
                                 })
                         })
-                    user.status = true
-                    user.save()
-                    res.send({
-                        success: true,
-                        exp: decodeToken.exp,
-                        author: user.author,
-                        avatar: user.avatar,
-                        status: user.status,
-                        _id: user._id,
-                        pending: user.pending
-                    })
+                    await Pendings.find({ to: user._id })
+                        .then(async pending => {
+                            await Friends.find({ to: user._id }).then(async to => {
+                                if (to.length >= 1) {
+                                    await Friends.find({ from: user._id }).then(async from => {
+
+                                        if (from.length >= 1) {
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: {
+                                                    to
+                                                    , from
+                                                }
+                                            })
+                                        } else {
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: { to }
+                                            })
+                                        }
+                                    })
+                                } else {
+                                    await Friends.find({ from: user._id }).then(from => {
+                                        if (from.length >= 1) {
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending,
+                                                listfriends: { from }
+                                            })
+                                        } else {
+                                            user.status = true
+                                            user.save()
+                                            res.send({
+                                                success: true,
+                                                exp: decodeToken.exp,
+                                                author: user.author,
+                                                avatar: user.avatar,
+                                                status: user.status,
+                                                _id: user._id,
+                                                pending: pending
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        })
                 }).catch((error) => {
                     res.send({
                         error: true,
+                        outdated: true,
                         message: error,
                     });
                 });

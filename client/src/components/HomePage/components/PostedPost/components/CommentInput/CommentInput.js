@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ const CommentInput = (props) => {
         handleSubmit
     } = useForm();
 
-    const createPost = async (comment) => {
+    const createPost = useCallback(async (comment) => {
         const newComment = {
             content: comment,
             _id: props.pending
@@ -30,16 +30,16 @@ const CommentInput = (props) => {
             })
             .catch(err => {
             })
-    }
+    }, [props])
 
     useEffect(() => {
         let s = true;
         if (s) {
-        props.setSuccess(false)
+            props.setSuccess(false)
         }
-        return () => {s = false}
-    }, [createPost, handleSubmit,props])
-    
+        return () => { s = false }
+    }, [createPost, handleSubmit, props])
+
     return (
         <form
             onSubmit={handleSubmit((data) => {

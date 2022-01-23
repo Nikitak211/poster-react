@@ -213,6 +213,26 @@
     justify-content:flex-start;
     align-items:flex-start;
 }
+.friend-request{
+    border: 1px solid black;
+    border-radius: 50%;
+    width:18.68px;
+    height:18.68px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    cursor: pointer;
+}
+.friend-request p{
+    display: flex;
+    align-items: center;
+    justify-content:center;
+}
 @media only screen and (max-width: 800px) {
     .post{
         width: 100%;

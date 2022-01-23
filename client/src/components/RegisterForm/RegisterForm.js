@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 import './RegisterForm.css';
+import Input from '../Input';
 
 const RegisterForm = () => {
     const {
@@ -23,10 +24,8 @@ const RegisterForm = () => {
             email: email,
             date: new Date()
         }
-        const api = axios.create({
-            baseUrl: 'http://localhost:7000'
-        })
-        await api.post('/api/auth/register', newUser)
+
+        await axios.post('/api/auth/register', newUser)
             .then(response => {
                 let data = response.data
 
@@ -48,71 +47,27 @@ const RegisterForm = () => {
             <div>
                 <label className={errors.username?.message || success}>Username</label>
                 <small className={errors.username?.message}>{errors.username?.message}</small>
-                <input type="username"
-                    {...register("username", {
-                        required: "cannot be empty",
-                        validate: value => !value.includes('@') || "cannot be email"
-                    }
-                    )}
-                ></input>
+                <Input type={"username"} callback={"username"} required={"cannot be empty"} func={register} valid={value => !value.includes('@') || "cannot be email"} />
             </div>
             <div>
                 <label className={errors.email?.message || success || error}>Email</label>
                 <small className={errors.email?.message}>{errors.email?.message}</small>
-                <input type="email"
-                    {...register("email", {
-                        required: "email is required",
-                        pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "invalid email address"
-                        },
-                        validate: value => value === watch("emailValidation") || "email is not matching"
-                    }
-                    )}
-                ></input>
+                <Input type={"email"} callback={"email"} required={"email is required"} message="invalid email address" value={/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i} func={register} valid={value => value === watch("emailValidation") || "email is not matching"} />
             </div>
             <div>
                 <label className={errors.emailValidation?.message || success || error}>Email Verification</label>
                 <small className={errors.emailValidation?.message}>{errors.email?.message}</small>
-                <input type="email"
-                    {...register("emailValidation", {
-                        required: "email is required",
-                        pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "invalid email address"
-                        },
-                        validate: value => value === watch('email') || "email is not matching"
-                    }
-                    )}
-                ></input>
+                <Input type={"email"} callback={"emailValidation"} required={"email is required"} message="invalid email address" value={/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i} func={register} valid={value => value === watch("email") || "email is not matching"} />
             </div>
             <div>
                 <label className={errors.Password?.message || success}>Password</label>
                 <small className={errors.Password?.message}>{errors.Password?.message}</small>
-                <input type="Password"
-                    {...register("Password", {
-                        required: "password is required",
-                        minLength: {
-                            value: 8,
-                            message: "minimum length is 8"
-                        },
-                        validate: value => value === watch('PasswordValidation') || "password doesnt match"
-                    })}
-                ></input>
+                <Input type={"Password"} callback={"Password"} required={"password is required"} message="minimum length is 8" value={8} func={register} valid={value => value === watch('PasswordValidation') || "password doesnt match"} />
             </div>
             <div>
                 <label className={errors.PasswordValidation?.message || success}>Password Verification</label>
                 <small className={errors.PasswordValidation?.message}>{errors.PasswordValidation?.message}</small>
-                <input type="Password"
-                    {...register("PasswordValidation", {
-                        required: "password is required",
-                        minLength: {
-                            value: 8,
-                            message: "minimum length is 8"
-                        },
-                        validate: value => value === watch('Password') || "password doesnt match"
-                    })}
-                ></input>
+                <Input type={"Password"} callback={"PasswordValidation"} required={"password is required"} message="minimum length is 8" value={8} func={register} valid={value => value === watch('Password') || "password doesnt match"} />
             </div>
             <button>Sign Up</button>
         </form>

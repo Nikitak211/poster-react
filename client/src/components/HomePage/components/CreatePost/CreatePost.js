@@ -7,8 +7,7 @@ import './CreatePost.css'
 const CreatePost = (props) => {
     const {
         register,
-        handleSubmit,
-        formState: { errors }
+        handleSubmit
     } = useForm();
 
     async function sendPost(body) {
@@ -31,7 +30,7 @@ const CreatePost = (props) => {
             <div className="container-1">
                 <div className="formFillArea">
                     <div className="textare-inline-2c">
-                        <img width="40" src={props.avatar} className="profile-picture-post"></img>
+                        <img alt="" width="40" src={props.avatar} className="profile-picture-post"></img>
                         <textarea placeholder="write your post here..." className="post___body-text"
                             {...register("content", {
                                 required: "content is required",

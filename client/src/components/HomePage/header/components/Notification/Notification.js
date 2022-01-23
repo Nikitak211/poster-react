@@ -1,4 +1,4 @@
-import { useEffect , useState} from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ import './Notification.css';
 
 const Notification = ({ props }) => {
     const [clicked, setClicked] = useState(false)
-    const [css, setCss] = useState("notification-open-container")
+    const [css, setCss] = useState("notification-open-container hide")
 
     const click = () => {
         if (clicked) {
@@ -18,19 +18,17 @@ const Notification = ({ props }) => {
         }
     }
 
-    const acceptFriendRequest = async (uid) => {
-        if(props.user_id !== undefined) {
-            await axios.post('/api/auth/acceptRequest',{
-                puid:props.user_id,
-                uid
+    const acceptFriendRequest = useCallback(async (puid) => {
+        if (props.user_id !== undefined) {
+            await axios.post('/api/auth/acceptRequest', {
+                uid: props.user_id,
+                puid
             })
         }
-        
-    }
-    
-    useEffect(() => {
+    }, [props])
 
-    },[])
+    useEffect(() => {
+    }, [acceptFriendRequest])
 
     return (
         <>
@@ -41,12 +39,13 @@ const Notification = ({ props }) => {
                         <div onClick={click} className="notification-bell"></div>
                     </div>
                     <div className={css}>
-                    <ul className="notification-ul">
-                        {props.pending.map(pending => {
-                            pending = pending.split(props.user_id).join('')
-                            return <li key={props.user_id} style={{ color: 'black', fontSize: '6px',height: '1.8em' , cursor: 'default' }}>{pending}<p onClick={() => acceptFriendRequest(pending)} style={{ color: 'black', fontSize: '10px', cursor:'pointer'}}>+</p></li>
-                        })}
-                    </ul>
+                        <ul className="notification-ul">
+                            {props.pending.map(pending => {
+                                let id = pending.from
+                                let name = pending.fromName
+                                return <li key={pending} style={{ color: 'black', fontSize: '6px', height: '1.8em', cursor: 'default' }}>{name}<p onClick={() => acceptFriendRequest(id)} style={{ color: 'black', fontSize: '10px', cursor: 'pointer' }}>+</p></li>
+                            })}
+                        </ul>
                     </div>
                 </div>
             ) : (
@@ -59,8 +58,7 @@ const Notification = ({ props }) => {
                     </div>
                     <div className={css}></div>
                 </div>
-            )
-            }
+            )}
         </>
     );
 }

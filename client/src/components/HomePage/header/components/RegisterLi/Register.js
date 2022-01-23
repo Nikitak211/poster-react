@@ -8,10 +8,9 @@ const Register = (props) => {
                 } else {
                     props.props.setVisibleRegister(true);
                 }
-
-            } }
+            }}
         >Register</li>
     );
 }
- 
+
 export default Register;

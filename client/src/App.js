@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import axios from 'axios';
-
-
-
 
 import Header from "./components/header/Header";
 import LoginForm from "./components/LoginForm/LoginForm";
@@ -11,25 +8,20 @@ import HomePage from './components/HomePage/HomePage';
 import RegisterForm from "./components/RegisterForm/RegisterForm";
 import ProfileSettings from './components/HomePage/components/ProfileSettings/ProfileSettings';
 
-
-
-
 function App() {
-
   const [token, setToken] = useState();
   const [status, setStatus] = useState();
 
-
-  const [visibleLogin, setVisibleLogin] = useState(true)
-  const [visibleRegister, setVisibleRegister] = useState(true)
+  const [visibleLogin, setVisibleLogin] = useState(false)
+  const [visibleRegister, setVisibleRegister] = useState(false)
 
   const fetch = async () => {
-    await axios.post('/api/auth/authed', {
-      body: true
-    })
+    await axios.get('/api/auth/profile')
       .then(response => {
+        
         const token = response.data.success;
-        const status = response.data.status;
+        const status = response.data.outdated;
+        console.log(status)
         setStatus(status)
         setToken(token);
       })
@@ -39,54 +31,21 @@ function App() {
     fetch()
   })
 
-  const VisibleLogin = () => {
-    if (visibleLogin) {
-      return (
-        <div>
-        </div>
-      )
-    } else {
-      return (
-        <LoginForm />
-      )
-    }
-  }
-
-  const VisibleRegister = () => {
-    if (visibleRegister) {
-      return (
-        <div>
-        </div>
-      )
-    } else {
-      return (
-        <RegisterForm />
-      )
-    }
-  }
-
-  
-
   if (status) {
     return (
       <div>
-        <Header setVisibleLogin={setVisibleLogin} visibleLogin={visibleLogin} setVisibleRegister={setVisibleRegister} visibleRegister={visibleRegister} />
-        <VisibleLogin />
-        <VisibleRegister />
-        
+        <Header visibleLogin={visibleLogin} visibleRegister={visibleRegister} setVisibleRegister={setVisibleRegister} setVisibleLogin={setVisibleLogin} />
+        {visibleRegister && <RegisterForm />}
+        {visibleLogin && <LoginForm />}
       </div>
     )
   }
   if (token) {
     return (
-      <div>
-        <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route exact path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfileSettings />} />
           </Routes>
-        </BrowserRouter>
-      </div>
     )
   }
 

@@ -20,16 +20,7 @@ const userSchema = new Schema({
     },
     status: {
         type: Boolean
-    },
-    friends: [{
-        type: String,
-    }],
-    pending: [{
-        type: String,
-    }],
-    request: [{
-        type: String,
-    }]
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);

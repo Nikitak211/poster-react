@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+    poster:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      image: lucifer666coder/poster-react
+      stdin_open: true
+      ports:
+        - 7000:7000
+      networks:
+        - mern-app
+
+networks:
+  mern-app:
+    driver: bridge
